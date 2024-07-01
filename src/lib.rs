@@ -19,7 +19,7 @@ bitflags! {
       const DOWNLOADS       = 1 << 3;
       /// Focus move (`Shift+Tab`)
       const FOCUS_MOVE      = 1 << 4;
-      /// Reload (`F5`, `Shift+F5`, `Ctrl+R`, `Ctrl+Shift+R`)
+      /// Reload (`F5`, `Ctrl+F5`, `Shift+F5`, `Ctrl+R`, `Ctrl+Shift+R`)
       const RELOAD          = 1 << 5;
       /// Source (`Ctrl+U`)
       const SOURCE          = 1 << 7;
@@ -107,6 +107,7 @@ impl Builder {
 
     if self.flags.contains(Flags::RELOAD) {
       js.push_str("onKey('F5');");
+      js.push_str("onKey('F5', { ctrlKey: true });");
       js.push_str("onKey('F5', { shiftKey: true });");
       js.push_str("onKey(['r', 'R'], { ctrlKey: true });");
       js.push_str("onKey(['r', 'R'], { ctrlKey: true, shiftKey: true });");
