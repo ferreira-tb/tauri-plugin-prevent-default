@@ -19,13 +19,13 @@ bitflags! {
       const DOWNLOADS       = 1 << 3;
       /// Focus move (`Shift+Tab`)
       const FOCUS_MOVE      = 1 << 4;
-      /// Reload (`Ctrl+R`)
+      /// Reload (`F5`, `Shift+F5`, `Ctrl+R`, `Ctrl+Shift+R`)
       const RELOAD          = 1 << 5;
       /// Source (`Ctrl+U`)
       const SOURCE          = 1 << 7;
       /// Open (`Ctrl+O`)
       const OPEN            = 1 << 8;
-      /// Print document (`Ctrl+P`)
+      /// Print document (`Ctrl+P`, `Ctrl+Shift+P`)
       const PRINT           = 1 << 9;
       /// Context menu (mouse right click)
       const CONTEXT_MENU    = 1 << 10;
