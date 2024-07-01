@@ -60,7 +60,7 @@ impl Builder {
     Self::default()
   }
 
-  pub fn with_state_flags(mut self, flags: Flags) -> Self {
+  pub fn with_flags(mut self, flags: Flags) -> Self {
     self.flags = flags;
     self
   }
