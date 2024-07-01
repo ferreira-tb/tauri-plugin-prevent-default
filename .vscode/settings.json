@@ -1,0 +1,15 @@
+{
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "conventionalCommits.promptScopes": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "rust-analyzer.imports.granularity.enforce": true,
+  "rust-analyzer.showUnlinkedFileNotification": false
+}

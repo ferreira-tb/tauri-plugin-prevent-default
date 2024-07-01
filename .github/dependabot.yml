@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: 'cargo'
+    directory: '/'
+    groups:
+      non-major:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+    labels:
+      - 'dependencies'
+    schedule:
+      interval: 'weekly'

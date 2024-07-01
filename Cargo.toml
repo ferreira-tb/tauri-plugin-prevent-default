@@ -1,0 +1,21 @@
+[package]
+name = "tauri-plugin-prevent-default"
+description = "Disable default webview hotkeys"
+version = "0.1.0"
+edition = "2021"
+homepage = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
+repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
+authors = ["Andrew Ferreira <andrew.shien2@gmail.com>"]
+license = "MIT"
+links = "tauri-plugin-prevent-default"
+keywords = ["plugin", "tauri", "tauri-plugin"]
+
+[dependencies]
+bitflags = "2.6.0"
+
+[dependencies.tauri]
+version = "2.0.0-beta.22"
+
+[build-dependencies.tauri-plugin]
+version = "2.0.0-beta.17"
+features = ["build"]
