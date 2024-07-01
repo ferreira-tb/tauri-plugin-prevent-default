@@ -1,3 +1,7 @@
+//! Disable default webview shortcuts in your Tauri app, e.g. `F3` or `Ctrl+J`.
+
+#![cfg(not(any(target_os = "android", target_os = "ios")))]
+
 use bitflags::bitflags;
 use tauri::plugin::TauriPlugin;
 use tauri::Runtime;
@@ -5,15 +9,25 @@ use tauri::Runtime;
 bitflags! {
   #[derive(Clone, Copy, Debug)]
   pub struct Flags: u32 {
-      const SEARCH          = 1 << 0;
+      /// Find (`Ctrl+F`, `Ctrl+G`, `F3`)
+      const FIND          = 1 << 0;
+      /// Caret browsing (`F7`)
       const CARET_BROWSING  = 1 << 1;
+      /// Developer tools (`Ctrl+Shift+I`)
       const DEV_TOOLS       = 1 << 2;
+      /// Downloads (`Ctrl+J`)
       const DOWNLOADS       = 1 << 3;
+      /// Focus move (`Shift+Tab`)
       const FOCUS_MOVE      = 1 << 4;
+      /// Reload (`Ctrl+R`)
       const RELOAD          = 1 << 5;
+      /// Source (`Ctrl+U`)
       const SOURCE          = 1 << 7;
+      /// Open (`Ctrl+O`)
       const OPEN            = 1 << 8;
+      /// Print document (`Ctrl+P`)
       const PRINT           = 1 << 9;
+      /// Context menu (mouse right click)
       const CONTEXT_MENU    = 1 << 10;
   }
 }
@@ -60,6 +74,7 @@ impl Builder {
     Self::default()
   }
 
+  /// Set flags to control which shortcuts the plugin should disable.
   pub fn with_flags(mut self, flags: Flags) -> Self {
     self.flags = flags;
     self
@@ -68,7 +83,7 @@ impl Builder {
   pub fn build<R: Runtime>(self) -> TauriPlugin<R> {
     let mut js = String::new();
 
-    if self.flags.contains(Flags::SEARCH) {
+    if self.flags.contains(Flags::FIND) {
       js.push_str("onKey('F3');");
       js.push_str("onKey(['f', 'F', 'g', 'G'], { ctrlKey: true });");
     }
