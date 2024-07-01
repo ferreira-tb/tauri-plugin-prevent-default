@@ -9,7 +9,7 @@ use tauri::Runtime;
 bitflags! {
   #[derive(Clone, Copy, Debug)]
   pub struct Flags: u32 {
-      /// Find (`Ctrl+F`, `Ctrl+G`, `F3`)
+      /// Find (`Ctrl+F`, `Ctrl+G`, `Ctrl+Shift+G`, `F3`)
       const FIND          = 1 << 0;
       /// Caret browsing (`F7`)
       const CARET_BROWSING  = 1 << 1;
@@ -86,6 +86,7 @@ impl Builder {
     if self.flags.contains(Flags::FIND) {
       js.push_str("onKey('F3');");
       js.push_str("onKey(['f', 'F', 'g', 'G'], { ctrlKey: true });");
+      js.push_str("onKey(['g', 'G'], { ctrlKey: true, shiftKey: true });");
     }
 
     if self.flags.contains(Flags::CARET_BROWSING) {
@@ -93,7 +94,7 @@ impl Builder {
     }
 
     if self.flags.contains(Flags::DEV_TOOLS) {
-      js.push_str("onKey('i', { ctrlKey: true, shiftKey: true });");
+      js.push_str("onKey(['i', 'I'], { ctrlKey: true, shiftKey: true });");
     }
 
     if self.flags.contains(Flags::DOWNLOADS) {
@@ -105,7 +106,10 @@ impl Builder {
     }
 
     if self.flags.contains(Flags::RELOAD) {
+      js.push_str("onKey('F5');");
+      js.push_str("onKey('F5', { shiftKey: true });");
       js.push_str("onKey(['r', 'R'], { ctrlKey: true });");
+      js.push_str("onKey(['r', 'R'], { ctrlKey: true, shiftKey: true });");
     }
 
     if self.flags.contains(Flags::SOURCE) {
@@ -118,6 +122,7 @@ impl Builder {
 
     if self.flags.contains(Flags::PRINT) {
       js.push_str("onKey(['p', 'P'], { ctrlKey: true });");
+      js.push_str("onKey(['p', 'P'], { ctrlKey: true, shiftKey: true });");
     }
 
     if self.flags.contains(Flags::CONTEXT_MENU) {
