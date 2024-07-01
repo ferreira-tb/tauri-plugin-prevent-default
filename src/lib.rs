@@ -25,31 +25,29 @@ impl Default for Flags {
 }
 
 const SCRIPT: &str = r#"
-  if (window.location.origin === 'https://tauri.app') {
-    (() => {
-      function createPredicate(key) {
-        if (Array.isArray(key)) return (e) => key.includes(e.key);
-        return (e) => e.key === key;
-      }
+  (() => {
+    function createPredicate(key) {
+      if (Array.isArray(key)) return (e) => key.includes(e.key);
+      return (e) => e.key === key;
+    }
 
-      function onKey(key, options) {
-        const predicate = createPredicate(key);
-        const { altKey = false, ctrlKey = false, shiftKey = false } = options;
+    function onKey(key, options = {}) {
+      const predicate = createPredicate(key);
+      const { altKey = false, ctrlKey = false, shiftKey = false } = options;
 
-        globalThis.addEventListener('keydown', (e) => {
-          if (e.altKey !== altKey || e.ctrlKey !== ctrlKey || e.shiftKey !== shiftKey) {
-            return;
-          }
+      globalThis.addEventListener('keydown', (e) => {
+        if (e.altKey !== altKey || e.ctrlKey !== ctrlKey || e.shiftKey !== shiftKey) {
+          return;
+        }
 
-          if (predicate(e)) {
-            e.preventDefault();
-          }
-        });
-      }
+        if (predicate(e)) {
+          e.preventDefault();
+        }
+      });
+    }
 
-      //REPLACE_ME
-    })();
-  }
+    //REPLACE_ME
+  })();
 "#;
 
 #[derive(Default)]
@@ -88,23 +86,23 @@ impl Builder {
     }
 
     if self.flags.contains(Flags::FOCUS_MOVE) {
-      js.push_str("onKeyDown('Tab', { shiftKey: true });");
+      js.push_str("onKey('Tab', { shiftKey: true });");
     }
 
     if self.flags.contains(Flags::RELOAD) {
-      js.push_str("onKeyDown(['r', 'R'], { ctrlKey: true });");
+      js.push_str("onKey(['r', 'R'], { ctrlKey: true });");
     }
 
     if self.flags.contains(Flags::SOURCE) {
-      js.push_str("onKeyDown(['u', 'U'], { ctrlKey: true });");
+      js.push_str("onKey(['u', 'U'], { ctrlKey: true });");
     }
 
     if self.flags.contains(Flags::OPEN) {
-      js.push_str("onKeyDown(['o', 'O'], { ctrlKey: true });");
+      js.push_str("onKey(['o', 'O'], { ctrlKey: true });");
     }
 
     if self.flags.contains(Flags::PRINT) {
-      js.push_str("onKeyDown(['p', 'P'], { ctrlKey: true });");
+      js.push_str("onKey(['p', 'P'], { ctrlKey: true });");
     }
 
     if self.flags.contains(Flags::CONTEXT_MENU) {
