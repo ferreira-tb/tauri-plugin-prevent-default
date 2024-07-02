@@ -38,32 +38,6 @@ impl Default for Flags {
   }
 }
 
-const SCRIPT: &str = r#"
-  (() => {
-    function createPredicate(key) {
-      if (Array.isArray(key)) return (e) => key.includes(e.key);
-      return (e) => e.key === key;
-    }
-
-    function onKey(key, options = {}) {
-      const predicate = createPredicate(key);
-      const { altKey = false, ctrlKey = false, shiftKey = false } = options;
-
-      globalThis.addEventListener('keydown', (e) => {
-        if (e.altKey !== altKey || e.ctrlKey !== ctrlKey || e.shiftKey !== shiftKey) {
-          return;
-        }
-
-        if (predicate(e)) {
-          e.preventDefault();
-        }
-      });
-    }
-
-    //REPLACE_ME
-  })();
-"#;
-
 #[derive(Default)]
 pub struct Builder {
   flags: Flags,
@@ -134,7 +108,9 @@ impl Builder {
       );
     }
 
-    let script = SCRIPT.replace("//REPLACE_ME", &js);
+    let script = include_str!("script.js")
+      .trim()
+      .replace("//REPLACE_ME", &js);
 
     tauri::plugin::Builder::new("prevent-default")
       .js_init_script(script)
