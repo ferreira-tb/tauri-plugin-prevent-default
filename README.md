@@ -1,6 +1,6 @@
 # tauri-plugin-prevent-default
 
-Disable default webview shortcuts in your Tauri app, e.g. `F3` or `Ctrl+J`.
+Disable default browser shortcuts in your Tauri app, e.g. `F3` or `Ctrl+J`.
 
 ## Install
 
@@ -43,6 +43,45 @@ fn main() {
 }
 ```
 
+To disable all but a few:
+
+```rust
+use tauri_plugin_prevent_default::Flags;
+
+// This will disable all shortcuts, except `FIND` and `RELOAD`.
+tauri_plugin_prevent_default::Builder::new()
+  .with_flags(Flags::all().difference(Flags::FIND | Flags::RELOAD))
+  .build()
+```
+
+To keep certain shortcuts enabled only when in dev mode:
+
+```rust
+fn main() {
+  tauri::Builder::default()
+    .plugin(prevent_default())
+    .run(tauri::generate_context!())
+    .expect("error while running tauri application");
+}
+
+#[cfg(debug_assertions)]
+pub fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+  use tauri_plugin_prevent_default::Flags;
+
+  tauri_plugin_prevent_default::Builder::new()
+    .with_flags(Flags::all().difference(Flags::DEV_TOOLS | Flags::RELOAD))
+    .build()
+}
+
+#[cfg(not(debug_assertions))]
+pub fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+  tauri_plugin_prevent_default::Builder::new().build()
+}
+```
+
+> [!TIP]
+> The plugin is guaranteed to work on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please open an issue.
+
 ## Contributing
 
-If you know of any other shortcuts that we can include in the plugin, please let us know!
+If there is any other shortcuts that I can include in the plugin, please let me know!

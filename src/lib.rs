@@ -1,4 +1,4 @@
-//! Disable default webview shortcuts in your Tauri app, e.g. `F3` or `Ctrl+J`.
+//! Disable default browser shortcuts in your Tauri app, e.g. `F3` or `Ctrl+J`.
 
 #![cfg(not(any(target_os = "android", target_os = "ios")))]
 
