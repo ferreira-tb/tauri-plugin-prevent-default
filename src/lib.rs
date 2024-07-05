@@ -117,3 +117,8 @@ impl Builder {
       .build()
   }
 }
+
+/// Initialize the plugin with default values.
+pub fn init<R: Runtime>() -> TauriPlugin<R> {
+  Builder::default().build()
+}
