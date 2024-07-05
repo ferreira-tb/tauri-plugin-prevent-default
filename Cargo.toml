@@ -1,7 +1,7 @@
 [package]
 name = "tauri-plugin-prevent-default"
 description = "Disable default webview shortcuts"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 homepage = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
@@ -9,6 +9,10 @@ documentation = "https://docs.rs/tauri-plugin-prevent-default"
 authors = ["Andrew Ferreira <andrew.shien2@gmail.com>"]
 license = "MIT"
 keywords = ["plugin", "tauri", "tauri-plugin"]
+
+[package.metadata.docs.rs]
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 bitflags = "2.6.0"
