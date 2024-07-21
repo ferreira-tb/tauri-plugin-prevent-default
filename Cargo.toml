@@ -1,7 +1,7 @@
 [package]
 name = "tauri-plugin-prevent-default"
 description = "Disable default webview shortcuts"
-version = "0.1.10"
+version = "0.1.11"
 edition = "2021"
 homepage = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"

@@ -20,7 +20,7 @@ Register the plugin with Tauri:
 ```rust
 fn main() {
   tauri::Builder::default()
-    .plugin(tauri_plugin_prevent_default::Builder::new().build())
+    .plugin(tauri_plugin_prevent_default::init())
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
@@ -65,7 +65,7 @@ fn main() {
 }
 
 #[cfg(debug_assertions)]
-pub fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
   use tauri_plugin_prevent_default::Flags;
 
   tauri_plugin_prevent_default::Builder::new()
@@ -74,12 +74,13 @@ pub fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 }
 
 #[cfg(not(debug_assertions))]
-pub fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
+fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
   tauri_plugin_prevent_default::Builder::new().build()
 }
 ```
 
 ### Note
+
 The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 
 ## Contributing
