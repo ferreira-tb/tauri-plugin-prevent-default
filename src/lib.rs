@@ -10,7 +10,7 @@ bitflags! {
   #[derive(Clone, Copy, Debug)]
   pub struct Flags: u32 {
       /// Find (`Ctrl+F`, `Ctrl+G`, `Ctrl+Shift+G`, `F3`)
-      const FIND          = 1 << 0;
+      const FIND            = 1 << 0;
       /// Caret browsing (`F7`)
       const CARET_BROWSING  = 1 << 1;
       /// Developer tools (`Ctrl+Shift+I`)
