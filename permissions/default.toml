@@ -1,0 +1,4 @@
+"$schema" = "schemas/schema.json"
+[default]
+description = "Default permissions for the prevent-default plugin"
+permissions = ["allow-keyboard", "allow-pointer"]
