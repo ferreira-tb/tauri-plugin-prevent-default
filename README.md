@@ -102,8 +102,8 @@ Set a custom event listener:
 use tauri_plugin_prevent_default::Flags;
 
 tauri_plugin_prevent_default::Builder::new()
-  .on_flag_event(Flags::CONTEXT_MENU, |_app| {
-     println!("context menu triggered!");
+  .on_flag_event(Flags::CONTEXT_MENU, |window| {
+     println!("context menu triggered on window {}", window.label());
   })
  .build();
 ```
