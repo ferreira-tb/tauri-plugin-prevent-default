@@ -23,11 +23,13 @@ Enable the required permissions:
 }
 ```
 
-Install the JavaScript package with your preferred package manager:
+**OPTIONAL:** Install the JavaScript package with your preferred package manager:
 
 ```sh
 pnpm add tauri-plugin-prevent-default
 ```
+
+> Installing the JavaScript package is completely optional. Its only purpose is to provide a way to set simple listeners using JavaScript. `event:allow-listen` should be added to the capabilities file if you decide to use it.
 
 ## Usage
 

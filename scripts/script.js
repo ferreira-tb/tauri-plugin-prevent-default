@@ -26,11 +26,11 @@ if (window.location.origin.includes(ORIGIN ?? '')) {
       }
     });
   }
-  function onPointer(event) {
-    window.addEventListener(event, (e) => {
+  function onPointer(name) {
+    window.addEventListener(name, (e) => {
       e.preventDefault();
       if (EMIT) {
-        const payload = { event };
+        const payload = { name };
         invoke('plugin:prevent-default|pointer', { payload });
       }
     });

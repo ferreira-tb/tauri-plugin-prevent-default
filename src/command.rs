@@ -1,5 +1,5 @@
 use crate::display::{keyboard_to_string, pointer_to_string};
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::shortcut::ModifierKey::{AltKey, CtrlKey, ShiftKey};
 use crate::state::PluginState;
 use crate::PointerEvent;
@@ -16,8 +16,6 @@ pub(crate) struct KeyboardPayload {
   ctrl_key: bool,
   shift_key: bool,
   alt_key: bool,
-
-  #[serde(default)]
   origin: Option<String>,
 }
 
@@ -47,7 +45,6 @@ pub(crate) async fn keyboard<R: Runtime>(
   state.call_listeners(&shortcut, &window);
 
   payload.origin = window.label().to_owned().into();
-
   state
     .emitter
     .emit(&window, KEYBOARD_EVENT, payload)
@@ -56,9 +53,7 @@ pub(crate) async fn keyboard<R: Runtime>(
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct PointerPayload {
-  event: String,
-
-  #[serde(default)]
+  name: String,
   origin: Option<String>,
 }
 
@@ -70,19 +65,23 @@ pub(crate) async fn pointer<R: Runtime>(
   #[cfg(feature = "tracing")]
   tracing::debug!(kind = "pointer", window = window.label(), ?payload);
 
+  let name = payload.name.as_str();
   let state = window.state::<PluginState<R>>();
-  match PointerEvent::try_from(payload.event.as_str()) {
+  match PointerEvent::try_from(name) {
     Ok(event) => {
       state.call_listeners(&pointer_to_string(event), &window);
-    }
-    #[cfg(feature = "tracing")]
-    Err(error) => tracing::error!(%error),
-    #[cfg(not(feature = "tracing"))]
-    Err(_) => {}
-  }
 
-  payload.origin = window.label().to_owned().into();
-  state
-    .emitter
-    .emit(&window, POINTER_EVENT, payload)
+      payload.origin = window.label().to_owned().into();
+      state
+        .emitter
+        .emit(&window, POINTER_EVENT, payload)
+    }
+    #[cfg_attr(not(feature = "tracing"), allow(unused_variables))]
+    Err(error) => {
+      #[cfg(feature = "tracing")]
+      tracing::error!(%error);
+
+      Err(Error::InvalidPointerEvent(name.to_owned()))
+    }
+  }
 }

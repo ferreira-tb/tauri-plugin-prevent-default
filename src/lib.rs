@@ -45,13 +45,13 @@ bitflags! {
       /// Reload (`F5`, `Ctrl+F5`, `Shift+F5`, `Ctrl+R`, `Ctrl+Shift+R`)
       const RELOAD          = 1 << 5;
       /// Source (`Ctrl+U`)
-      const SOURCE          = 1 << 7;
+      const SOURCE          = 1 << 6;
       /// Open (`Ctrl+O`)
-      const OPEN            = 1 << 8;
+      const OPEN            = 1 << 7;
       /// Print document (`Ctrl+P`, `Ctrl+Shift+P`)
-      const PRINT           = 1 << 9;
+      const PRINT           = 1 << 8;
       /// Context menu (mouse right click)
-      const CONTEXT_MENU    = 1 << 10;
+      const CONTEXT_MENU    = 1 << 9;
   }
 }
 
