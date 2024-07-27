@@ -8,8 +8,28 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 0.1
+tauri-plugin-prevent-default = 0.2
 ```
+
+Enable the required permissions:
+
+`src-tauri/capabilities/prevent-default.json`
+
+```json
+{
+  "identifier": "prevent-default",
+  "windows": ["*"],
+  "permissions": ["prevent-default:default"]
+}
+```
+
+**OPTIONAL:** Install the JavaScript package with your preferred package manager:
+
+```sh
+pnpm add tauri-plugin-prevent-default
+```
+
+> Installing the JavaScript package is completely optional. Its only purpose is to provide a way to set simple listeners using JavaScript. `event:allow-listen` should be added to the capabilities file if you decide to use it.
 
 ## Usage
 
@@ -43,7 +63,7 @@ fn main() {
 }
 ```
 
-To disable all but a few:
+Disable all but a few:
 
 ```rust
 use tauri_plugin_prevent_default::Flags;
@@ -54,7 +74,41 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
-To keep certain shortcuts enabled only when in dev mode:
+Disable only keyboard shortcuts:
+
+```rust
+use tauri_plugin_prevent_default::Flags;
+
+tauri_plugin_prevent_default::Builder::new()
+  .with_flags(Flags::keyboard())
+  .build()
+```
+
+Disable custom shortcuts:
+
+```rust
+use tauri_plugin_prevent_default::KeyboardShortcut;
+use tauri_plugin_prevent_default::ModifierKey::{CtrlKey, ShiftKey};
+
+tauri_plugin_prevent_default::Builder::new()
+  .shortcut(KeyboardShortcut::new("F12"))
+  .shortcut(KeyboardShortcut::with_modifiers("E", &[CtrlKey, ShiftKey]))
+  .build();
+```
+
+Set a custom event listener:
+
+```rust
+use tauri_plugin_prevent_default::Flags;
+
+tauri_plugin_prevent_default::Builder::new()
+  .on_flag_event(Flags::CONTEXT_MENU, |window| {
+     println!("context menu triggered on window {}", window.label());
+  })
+ .build();
+```
+
+Keep certain shortcuts enabled only when in dev mode:
 
 ```rust
 fn main() {
