@@ -1,6 +1,6 @@
 {
   "name": "tauri-plugin-prevent-default",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Disable default webview shortcuts",
   "type": "module",
   "private": false,
@@ -42,6 +42,7 @@
   "scripts": {
     "build": "vite build",
     "clippy": "cargo clippy",
+    "doc": "cargo doc --open",
     "format": "prettier . --write && cargo fmt",
     "prepare": "husky",
     "test": "cargo test --lib",
