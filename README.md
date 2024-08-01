@@ -8,10 +8,10 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 0.2
+tauri-plugin-prevent-default = 0.3
 ```
 
-Enable the required permissions:
+If using custom listeners, you must also enable the required permissions:
 
 `src-tauri/capabilities/prevent-default.json`
 
@@ -22,14 +22,6 @@ Enable the required permissions:
   "permissions": ["prevent-default:default"]
 }
 ```
-
-**OPTIONAL:** Install the JavaScript package with your preferred package manager:
-
-```sh
-pnpm add tauri-plugin-prevent-default
-```
-
-> Installing the JavaScript package is completely optional. Its only purpose is to provide a way to set simple listeners using JavaScript. `event:allow-listen` should be added to the capabilities file if you decide to use it.
 
 ## Usage
 
@@ -92,18 +84,6 @@ tauri_plugin_prevent_default::Builder::new()
   .build();
 ```
 
-Set a custom event listener:
-
-```rust
-use tauri_plugin_prevent_default::Flags;
-
-tauri_plugin_prevent_default::Builder::new()
-  .on_flag_event(Flags::CONTEXT_MENU, |window| {
-     println!("context menu triggered on window {}", window.label());
-  })
- .build();
-```
-
 Keep certain shortcuts enabled only when in dev mode:
 
 ```rust
@@ -133,6 +113,3 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
 The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 
-## Contributing
-
-If there is any other shortcuts that I can include in the plugin, please let me know!

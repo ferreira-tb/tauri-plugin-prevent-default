@@ -1,5 +1,5 @@
 use super::ModifierKey;
-use crate::display::keyboard_to_string;
+use crate::display;
 use crate::listener::EventListener;
 use std::fmt;
 use tauri::{Runtime, Window};
@@ -20,12 +20,19 @@ impl<R: Runtime> KeyboardShortcut<R> {
     }
   }
 
+  pub fn builder(key: impl AsRef<str>) -> KeyboardShortcutBuilder<R> {
+    KeyboardShortcutBuilder::new(key)
+  }
+
   pub fn with_modifiers(key: impl AsRef<str>, modifiers: &[ModifierKey]) -> Self {
     Self::builder(key).modifiers(modifiers).build()
   }
 
-  pub fn builder(key: impl AsRef<str>) -> KeyboardShortcutBuilder<R> {
-    KeyboardShortcutBuilder::new(key)
+  pub fn with_listener<F>(key: impl AsRef<str>, listener: F) -> Self
+  where
+    F: Fn(&Window<R>) + Send + Sync + 'static,
+  {
+    Self::builder(key).on(listener).build()
   }
 
   pub fn key(&self) -> &str {
@@ -39,7 +46,7 @@ impl<R: Runtime> KeyboardShortcut<R> {
 
 impl<R: Runtime> fmt::Display for KeyboardShortcut<R> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", keyboard_to_string(&self.key, &self.modifiers))
+    write!(f, "{}", display::keyboard(&self.key, &self.modifiers))
   }
 }
 

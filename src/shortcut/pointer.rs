@@ -1,4 +1,4 @@
-use crate::display::pointer_to_string;
+use crate::display;
 use crate::listener::EventListener;
 use std::fmt;
 use strum::{Display as EnumDisplay, EnumIs, EnumString};
@@ -26,6 +26,13 @@ impl<R: Runtime> PointerShortcut<R> {
     PointerShortcutBuilder::new(event)
   }
 
+  pub fn with_listener<F>(event: PointerEvent, listener: F) -> Self
+  where
+    F: Fn(&Window<R>) + Send + Sync + 'static,
+  {
+    Self::builder(event).on(listener).build()
+  }
+
   pub fn event(&self) -> PointerEvent {
     self.event
   }
@@ -33,7 +40,7 @@ impl<R: Runtime> PointerShortcut<R> {
 
 impl<R: Runtime> fmt::Display for PointerShortcut<R> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", pointer_to_string(self.event))
+    write!(f, "{}", display::pointer(self.event))
   }
 }
 

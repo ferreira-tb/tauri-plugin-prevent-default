@@ -8,10 +8,10 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tauri-plugin-prevent-default = 0.2
+//! tauri-plugin-prevent-default = 0.3
 //! ```
 //!
-//! Enable the required permissions:
+//! If using custom listeners, you must also enable the required permissions:
 //!
 //! `src-tauri/capabilities/prevent-default.json`
 //!
@@ -22,14 +22,6 @@
 //!   "permissions": ["prevent-default:default"]
 //! }
 //! ```
-//!
-//! **OPTIONAL:** Install the JavaScript package with your preferred package manager:
-//!
-//! ```sh
-//! pnpm add tauri-plugin-prevent-default
-//! ```
-//!
-//! > Installing the JavaScript package is completely optional. Its only purpose is to provide a way to set simple listeners using JavaScript. `event:allow-listen` should be added to the capabilities file if you decide to use it.
 //!
 //! ## Usage
 //!
@@ -92,18 +84,6 @@
 //!   .build();
 //! ```
 //!
-//! Set a custom event listener:
-//!
-//! ```rust
-//! use tauri_plugin_prevent_default::Flags;
-//!
-//! tauri_plugin_prevent_default::Builder::new()
-//!   .on_flag_event(Flags::CONTEXT_MENU, |window| {
-//!      println!("context menu triggered on window {}", window.label());
-//!   })
-//!  .build();
-//! ```
-//!
 //! Keep certain shortcuts enabled only when in dev mode:
 //!
 //! ```rust
@@ -133,9 +113,6 @@
 //!
 //! The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 //!
-//! ## Contributing
-//!
-//! If there is any other shortcuts that I can include in the plugin, please let me know!
 
 #![forbid(unsafe_code)]
 #![cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -143,28 +120,24 @@
 mod command;
 mod display;
 mod error;
-mod event;
-pub mod listener;
-pub mod shortcut;
+mod listener;
+mod shortcut;
 mod state;
 
 use bitflags::bitflags;
 pub use error::Error;
-pub use event::EmitPolicy;
-use event::EventEmitter;
-use listener::EventListener;
 pub use shortcut::{
   KeyboardShortcut, KeyboardShortcutBuilder, ModifierKey, PointerEvent, PointerShortcut,
   PointerShortcutBuilder, Shortcut, ShortcutKind,
 };
 use state::PluginState;
-use tauri::plugin::TauriPlugin;
-use tauri::{Manager, Runtime, Window};
+use tauri::plugin::{Builder as PluginBuilder, TauriPlugin};
+use tauri::{Manager, Runtime};
 
 #[cfg(feature = "ahash")]
-use ahash::{HashMap, HashMapExt, HashSet, HashSetExt};
+use ahash::{HashSet, HashSetExt};
 #[cfg(not(feature = "ahash"))]
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -212,20 +185,16 @@ impl Default for Flags {
 
 pub struct Builder<R: Runtime> {
   flags: Flags,
-  flag_listeners: HashMap<Flags, HashSet<EventListener<R>>>,
   shortcuts: Vec<Box<dyn Shortcut<R>>>,
   check_origin: Option<String>,
-  emit_policy: EmitPolicy,
 }
 
 impl<R: Runtime> Default for Builder<R> {
   fn default() -> Self {
     Self {
       flags: Flags::default(),
-      flag_listeners: HashMap::new(),
       shortcuts: Vec::new(),
       check_origin: None,
-      emit_policy: EmitPolicy::default(),
     }
   }
 }
@@ -247,34 +216,6 @@ impl<R: Runtime> Builder<R> {
   /// ```
   pub fn with_flags(mut self, flags: Flags) -> Self {
     self.flags = flags;
-    self
-  }
-
-  /// Set a listener for a specific flag.
-  /// The listener will be called when the shortcut is triggered.
-  ///
-  /// # Examples
-  /// ```
-  /// use tauri_plugin_prevent_default::Flags;
-  ///
-  /// tauri_plugin_prevent_default::Builder::new()
-  ///   .on_flag_event(Flags::CONTEXT_MENU, |_app| {
-  ///       println!("context menu triggered!");
-  ///   })
-  ///   .build();
-  /// ```
-  pub fn on_flag_event<F>(mut self, flag: Flags, listener: F) -> Self
-  where
-    F: Fn(&Window<R>) + Send + Sync + 'static,
-  {
-    let listener = EventListener::new(listener);
-    if let Some(listeners) = self.flag_listeners.get_mut(&flag) {
-      listeners.insert(listener);
-    } else {
-      let mut set = HashSet::new();
-      set.insert(listener);
-      self.flag_listeners.insert(flag, set);
-    }
     self
   }
 
@@ -304,23 +245,13 @@ impl<R: Runtime> Builder<R> {
     self
   }
 
-  /// Define how the plugin should emit events.
-  /// By default, the plugin won't emit any events at all.
-  pub fn emit_policy(mut self, policy: EmitPolicy) -> Self {
-    self.emit_policy = policy;
-    self
-  }
-
   /// Build the plugin.
   pub fn build(mut self) -> TauriPlugin<R> {
     self.add_keyboard_shortcuts();
     self.add_pointer_shortcuts();
 
     let mut script = String::new();
-    let mut state = PluginState::<R> {
-      emitter: EventEmitter(self.emit_policy),
-      listeners: HashMap::new(),
-    };
+    let mut state = PluginState::<R>::new();
 
     for shortcut in &mut self.shortcuts {
       match shortcut.downcast_ref() {
@@ -328,19 +259,15 @@ impl<R: Runtime> Builder<R> {
           let modifiers = it.modifiers();
           let mut options = String::with_capacity(modifiers.len() * 12);
           for modifier in modifiers {
-            match modifier {
-              ModifierKey::AltKey => options.push_str("altKey:true,"),
-              ModifierKey::CtrlKey => options.push_str("ctrlKey:true,"),
-              ModifierKey::ShiftKey => options.push_str("shiftKey:true,"),
-            }
+            options.push_str(&format!("{modifier}:true,"));
           }
 
           let options = options.trim_end_matches(',');
           script.push_str(&format!("onKey('{}',{{{}}});", it.key(), options));
         }
-        ShortcutKind::Pointer(it) => match it.event() {
-          PointerEvent::ContextMenu => script.push_str("onPointer('contextmenu');"),
-        },
+        ShortcutKind::Pointer(it) => {
+          script.push_str(&format!("onPointer('{}');", it.event()));
+        }
       }
 
       let listeners = shortcut.take_listeners();
@@ -374,7 +301,7 @@ impl<R: Runtime> Builder<R> {
       .replace("/*ORIGIN*/", &origin)
       .replace("/*SCRIPT*/", &script);
 
-    if state.emitter.0.is_none() {
+    if state.listeners.is_empty() {
       script = script.replace("/*EMIT*/", "const EMIT=false;");
     } else {
       script = script.replace("/*EMIT*/", "const EMIT=true;");
@@ -383,101 +310,88 @@ impl<R: Runtime> Builder<R> {
     #[cfg(feature = "tracing")]
     tracing::trace!(script);
 
-    tauri::plugin::Builder::new("prevent-default")
-      .js_init_script(script)
-      .invoke_handler(tauri::generate_handler![
-        command::keyboard,
-        command::pointer
-      ])
-      .setup(|app, _| {
-        app.manage(state);
-        Ok(())
-      })
-      .build()
+    let mut builder = PluginBuilder::new("prevent-default");
+    if !state.listeners.is_empty() {
+      builder = builder
+        .invoke_handler(tauri::generate_handler![
+          command::keyboard,
+          command::pointer
+        ])
+        .setup(|app, _| {
+          app.manage(state);
+          Ok(())
+        })
+    }
+
+    builder.js_init_script(script).build()
   }
 
   fn add_keyboard_shortcuts(&mut self) {
     use shortcut::ModifierKey::{CtrlKey, ShiftKey};
 
     macro_rules! on_key {
-      ($flag:ident, $($arg:literal)+) => {
+      ($($arg:literal)+) => {
         $(
-          let mut shortcut = KeyboardShortcut::new($arg);
-          self.set_flag_listeners(Flags::$flag, &mut shortcut);
+          let  shortcut = KeyboardShortcut::new($arg);
           self.shortcuts.push(Box::new(shortcut));
         )*
       };
-      ($flag:ident, $modifiers:expr, $($arg:literal),+) => {
+      ($modifiers:expr, $($arg:literal),+) => {
         $(
-          let mut shortcut = KeyboardShortcut::with_modifiers($arg, $modifiers);
-          self.set_flag_listeners(Flags::$flag, &mut shortcut);
+          let  shortcut = KeyboardShortcut::with_modifiers($arg, $modifiers);
           self.shortcuts.push(Box::new(shortcut));
         )*
       };
     }
 
     if self.flags.contains(Flags::FIND) {
-      on_key!(FIND, "F3");
-      on_key!(FIND, &[CtrlKey], "f", "g");
-      on_key!(FIND, &[CtrlKey, ShiftKey], "g");
+      on_key!("F3");
+      on_key!(&[CtrlKey], "f", "g");
+      on_key!(&[CtrlKey, ShiftKey], "g");
     }
 
     if self.flags.contains(Flags::CARET_BROWSING) {
-      on_key!(CARET_BROWSING, "F7");
+      on_key!("F7");
     }
 
     if self.flags.contains(Flags::DEV_TOOLS) {
-      on_key!(DEV_TOOLS, &[CtrlKey, ShiftKey], "i");
+      on_key!(&[CtrlKey, ShiftKey], "i");
     }
 
     if self.flags.contains(Flags::DOWNLOADS) {
-      on_key!(DOWNLOADS, &[CtrlKey], "j");
+      on_key!(&[CtrlKey], "j");
     }
 
     if self.flags.contains(Flags::FOCUS_MOVE) {
-      on_key!(FOCUS_MOVE, &[ShiftKey], "Tab");
+      on_key!(&[ShiftKey], "Tab");
     }
 
     if self.flags.contains(Flags::RELOAD) {
-      on_key!(RELOAD, "F5");
-      on_key!(RELOAD, &[CtrlKey], "F5");
-      on_key!(RELOAD, &[ShiftKey], "F5");
-      on_key!(RELOAD, &[CtrlKey], "r");
-      on_key!(RELOAD, &[CtrlKey, ShiftKey], "r");
+      on_key!("F5");
+      on_key!(&[CtrlKey], "F5");
+      on_key!(&[ShiftKey], "F5");
+      on_key!(&[CtrlKey], "r");
+      on_key!(&[CtrlKey, ShiftKey], "r");
     }
 
     if self.flags.contains(Flags::SOURCE) {
-      on_key!(SOURCE, &[CtrlKey], "u");
+      on_key!(&[CtrlKey], "u");
     }
 
     if self.flags.contains(Flags::OPEN) {
-      on_key!(OPEN, &[CtrlKey], "o");
+      on_key!(&[CtrlKey], "o");
     }
 
     if self.flags.contains(Flags::PRINT) {
-      on_key!(PRINT, &[CtrlKey], "p");
-      on_key!(PRINT, &[CtrlKey, ShiftKey], "p");
+      on_key!(&[CtrlKey], "p");
+      on_key!(&[CtrlKey, ShiftKey], "p");
     }
   }
 
   fn add_pointer_shortcuts(&mut self) {
     if self.flags.contains(Flags::CONTEXT_MENU) {
-      let mut shortcut = PointerShortcut::new(PointerEvent::ContextMenu);
-      self.set_flag_listeners(Flags::CONTEXT_MENU, &mut shortcut);
+      let shortcut = PointerShortcut::new(PointerEvent::ContextMenu);
       self.shortcuts.push(Box::new(shortcut));
-    }
-  }
-
-  fn set_flag_listeners(&self, flag: Flags, shortcut: &mut dyn Shortcut<R>) {
-    let mut listeners = Vec::new();
-    for (flags, set) in &self.flag_listeners {
-      if flags.contains(flag) {
-        listeners.extend(set.iter().cloned());
-      }
-    }
-
-    if !listeners.is_empty() {
-      shortcut.add_listeners(&listeners);
     }
   }
 }

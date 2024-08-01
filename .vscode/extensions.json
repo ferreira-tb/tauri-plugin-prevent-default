@@ -1,11 +1,7 @@
 {
   "recommendations": [
     "tamasfe.even-better-toml",
-    "donjayamanne.githistory",
-    "github.vscode-pull-request-github",
     "rust-lang.rust-analyzer",
-    "tauri-apps.tauri-vscode",
-    "vscode-icons-team.vscode-icons",
-    "redhat.vscode-yaml"
+    "tauri-apps.tauri-vscode"
   ]
 }

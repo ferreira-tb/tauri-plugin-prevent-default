@@ -1,7 +1,7 @@
 /*EMIT*/ /*ORIGIN*/
 if (window.location.origin.includes(ORIGIN ?? '')) {
   const invoke = window.__TAURI_INTERNALS__?.invoke;
-  if (typeof invoke !== 'function') {
+  if (EMIT && typeof invoke !== 'function') {
     throw new TypeError('tauri invoke function not found');
   }
   function onKey(key, options = {}) {
