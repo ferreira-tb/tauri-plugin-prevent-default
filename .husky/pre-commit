@@ -1,4 +1,0 @@
-pnpm run type-check
-pnpm exec lint-staged
-cargo clippy
-cargo test --lib

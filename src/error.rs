@@ -1,12 +1,7 @@
 use serde::{Serialize, Serializer};
 
-pub type Result<T> = std::result::Result<T, Error>;
-
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-  #[error("invalid pointer event: {0}")]
-  InvalidPointerEvent(String),
-
   #[error(transparent)]
   Strum(#[from] strum::ParseError),
   #[error(transparent)]

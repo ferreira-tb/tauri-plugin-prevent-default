@@ -3,7 +3,7 @@ mod pointer;
 
 use crate::listener::EventListener;
 use std::{fmt, mem};
-use strum::EnumIs;
+use strum::{Display, EnumIs};
 use tauri::Runtime;
 
 pub use keyboard::{KeyboardShortcut, KeyboardShortcutBuilder};
@@ -65,7 +65,8 @@ impl<R: Runtime> ShortcutKind<'_, R> {
 }
 
 #[non_exhaustive]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, EnumIs)]
+#[derive(Clone, Copy, Debug, Display, PartialEq, Eq, Hash, EnumIs)]
+#[strum(serialize_all = "camelCase")]
 pub enum ModifierKey {
   AltKey,
   CtrlKey,

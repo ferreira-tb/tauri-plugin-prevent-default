@@ -1,7 +1,7 @@
 use crate::shortcut::{ModifierKey, PointerEvent};
 use itertools::Itertools;
 
-pub(crate) fn keyboard_to_string(key: &str, modifiers: &[ModifierKey]) -> String {
+pub(crate) fn keyboard(key: &str, modifiers: &[ModifierKey]) -> String {
   let mut string = String::from("keyboard:");
   let capacity = key.len() + modifiers.len() * 5;
   string.reserve(capacity);
@@ -18,7 +18,7 @@ pub(crate) fn keyboard_to_string(key: &str, modifiers: &[ModifierKey]) -> String
   string
 }
 
-pub(crate) fn pointer_to_string(event: PointerEvent) -> String {
+pub(crate) fn pointer(event: PointerEvent) -> String {
   format!("pointer:{event}")
 }
 
@@ -28,8 +28,8 @@ mod test {
   use crate::shortcut::PointerEvent;
 
   #[test]
-  fn keyboard_to_string() {
-    use super::keyboard_to_string as k;
+  fn display_keyboard() {
+    use super::keyboard as k;
 
     assert_eq!(k("A", &[]), "keyboard:a");
     assert_eq!(k("A", &[CtrlKey]), "keyboard:ctrl+a");
@@ -49,8 +49,8 @@ mod test {
   }
 
   #[test]
-  fn pointer_to_string() {
-    use super::pointer_to_string as p;
+  fn display_pointer() {
+    use super::pointer as p;
 
     assert_eq!(p(PointerEvent::ContextMenu), "pointer:contextmenu");
   }
