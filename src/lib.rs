@@ -332,13 +332,13 @@ impl<R: Runtime> Builder<R> {
     macro_rules! on_key {
       ($($arg:literal)+) => {
         $(
-          let  shortcut = KeyboardShortcut::new($arg);
+          let shortcut = KeyboardShortcut::new($arg);
           self.shortcuts.push(Box::new(shortcut));
         )*
       };
       ($modifiers:expr, $($arg:literal),+) => {
         $(
-          let  shortcut = KeyboardShortcut::with_modifiers($arg, $modifiers);
+          let shortcut = KeyboardShortcut::with_modifiers($arg, $modifiers);
           self.shortcuts.push(Box::new(shortcut));
         )*
       };
