@@ -113,3 +113,6 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
 The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 
+## Supported Tauri Version
+
+This plugin requires Tauri `2.0.0-rc` or later.
