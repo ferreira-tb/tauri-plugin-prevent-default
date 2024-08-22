@@ -19,7 +19,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 bitflags = "2.6"
 itertools = "0.13"
-tauri = "2.0.0-rc.3"
+tauri = "2.0.0-rc"
 thiserror = "1.0"
 
 [dependencies.ahash]
@@ -39,7 +39,7 @@ version = "0.1"
 optional = true
 
 [build-dependencies.tauri-plugin]
-version = "2.0.0-rc.3"
+version = "2.0.0-rc"
 features = ["build"]
 
 [features]
