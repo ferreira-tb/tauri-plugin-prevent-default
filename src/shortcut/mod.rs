@@ -97,6 +97,7 @@ impl Ord for ModifierKey {
 
 #[cfg(test)]
 mod test {
+  use super::ModifierKey::{AltKey, CtrlKey, ShiftKey};
   use super::*;
   use tauri::Wry;
 
@@ -136,24 +137,13 @@ mod test {
 
   #[test]
   fn modifier_key_order() {
-    assert!(ModifierKey::CtrlKey < ModifierKey::ShiftKey);
-    assert!(ModifierKey::ShiftKey < ModifierKey::AltKey);
-    assert!(ModifierKey::CtrlKey < ModifierKey::AltKey);
+    assert!(CtrlKey < ShiftKey);
+    assert!(ShiftKey < AltKey);
+    assert!(CtrlKey < AltKey);
 
-    let mut modifiers = vec![
-      ModifierKey::AltKey,
-      ModifierKey::CtrlKey,
-      ModifierKey::ShiftKey,
-    ];
-
+    let mut modifiers = vec![AltKey, CtrlKey, ShiftKey];
     modifiers.sort();
-    assert_eq!(
-      modifiers,
-      vec![
-        ModifierKey::CtrlKey,
-        ModifierKey::ShiftKey,
-        ModifierKey::AltKey
-      ]
-    );
+    
+    assert_eq!(modifiers, vec![CtrlKey, ShiftKey, AltKey]);
   }
 }

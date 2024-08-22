@@ -5,7 +5,7 @@ Default permissions for the prevent-default plugin
 - `allow-keyboard`
 - `allow-pointer`
 
-### Permission Table 
+## Permission Table 
 
 <table>
 <tr>
