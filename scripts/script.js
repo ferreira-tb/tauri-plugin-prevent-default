@@ -8,11 +8,13 @@ if (window.location.origin.includes(ORIGIN ?? '')) {
     const _key = key.toLowerCase();
     options.altKey ??= false;
     options.ctrlKey ??= false;
+    options.metaKey ??= false;
     options.shiftKey ??= false;
     window.addEventListener('keydown', (e) => {
       if (
         e.altKey !== options.altKey ||
         e.ctrlKey !== options.ctrlKey ||
+        e.metaKey !== options.metaKey ||
         e.shiftKey !== options.shiftKey
       ) {
         return;

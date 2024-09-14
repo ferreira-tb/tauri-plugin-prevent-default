@@ -70,15 +70,17 @@ impl<R: Runtime> ShortcutKind<'_, R> {
 pub enum ModifierKey {
   AltKey,
   CtrlKey,
+  MetaKey,
   ShiftKey,
 }
 
 impl ModifierKey {
-  fn precedence(&self) -> u8 {
+  fn precedence(self) -> u8 {
     match self {
       ModifierKey::CtrlKey => 0,
       ModifierKey::ShiftKey => 1,
       ModifierKey::AltKey => 2,
+      ModifierKey::MetaKey => 3,
     }
   }
 }
@@ -97,7 +99,7 @@ impl Ord for ModifierKey {
 
 #[cfg(test)]
 mod test {
-  use super::ModifierKey::{AltKey, CtrlKey, ShiftKey};
+  use super::ModifierKey::{AltKey, CtrlKey, MetaKey, ShiftKey};
   use super::*;
   use tauri::Wry;
 
@@ -141,9 +143,9 @@ mod test {
     assert!(ShiftKey < AltKey);
     assert!(CtrlKey < AltKey);
 
-    let mut modifiers = vec![AltKey, CtrlKey, ShiftKey];
+    let mut modifiers = vec![AltKey, MetaKey, CtrlKey, ShiftKey];
     modifiers.sort();
-    
-    assert_eq!(modifiers, vec![CtrlKey, ShiftKey, AltKey]);
+
+    assert_eq!(modifiers, vec![CtrlKey, ShiftKey, AltKey, MetaKey]);
   }
 }

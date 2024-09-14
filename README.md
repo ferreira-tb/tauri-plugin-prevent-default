@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 0.4
+tauri-plugin-prevent-default = 0.5
 ```
 
 If using custom listeners, you must also enable the required permissions:
@@ -81,6 +81,7 @@ use tauri_plugin_prevent_default::ModifierKey::{CtrlKey, ShiftKey};
 tauri_plugin_prevent_default::Builder::new()
   .shortcut(KeyboardShortcut::new("F12"))
   .shortcut(KeyboardShortcut::with_modifiers("E", &[CtrlKey, ShiftKey]))
+  .shortcut(KeyboardShortcut::with_shift_alt("I"))
   .build();
 ```
 
@@ -105,7 +106,7 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
 #[cfg(not(debug_assertions))]
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
-  tauri_plugin_prevent_default::Builder::new().build()
+  tauri_plugin_prevent_default::init()
 }
 ```
 

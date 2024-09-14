@@ -16,6 +16,23 @@ links = "tauri-plugin-prevent-default"
 rustc-args = ["--cfg", "docsrs"]
 rustdoc-args = ["--cfg", "docsrs"]
 
+[lints.clippy]
+clone_on_ref_ptr = "deny"
+doc_markdown = "allow"
+map_unwrap_or = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+needless_borrow = "deny"
+rest_pat_in_fully_bound_structs = "deny"
+similar_names = "allow"
+struct_excessive_bools = "allow"
+struct_field_names = "allow"
+useless_conversion = "deny"
+
+[lints.clippy.pedantic]
+level = "deny"
+priority = -1
+
 [dependencies]
 bitflags = "2.6"
 itertools = "0.13"

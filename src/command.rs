@@ -1,4 +1,4 @@
-use crate::shortcut::ModifierKey::{AltKey, CtrlKey, ShiftKey};
+use crate::shortcut::ModifierKey::{AltKey, CtrlKey, MetaKey, ShiftKey};
 use crate::state::PluginState;
 use crate::{display, PointerEvent};
 use serde::{Deserialize, Serialize};
@@ -8,9 +8,10 @@ use tauri::{Manager, Runtime, Window};
 #[serde(rename_all = "camelCase")]
 pub(crate) struct KeyboardPayload {
   key: String,
-  ctrl_key: bool,
-  shift_key: bool,
   alt_key: bool,
+  ctrl_key: bool,
+  meta_key: bool,
+  shift_key: bool,
   origin: Option<String>,
 }
 
@@ -20,17 +21,18 @@ pub(crate) async fn keyboard<R: Runtime>(window: Window<R>, payload: KeyboardPay
   tracing::trace!(kind = "keyboard", window = window.label(), ?payload);
 
   let mut modifiers = Vec::new();
-  if payload.alt_key {
-    modifiers.push(AltKey);
+  macro_rules! push {
+    ($modifier:ident, $variant:ident) => {
+      if payload.$modifier {
+        modifiers.push($variant);
+      }
+    };
   }
 
-  if payload.ctrl_key {
-    modifiers.push(CtrlKey);
-  }
-
-  if payload.shift_key {
-    modifiers.push(ShiftKey);
-  }
+  push!(alt_key, AltKey);
+  push!(ctrl_key, CtrlKey);
+  push!(meta_key, MetaKey);
+  push!(shift_key, ShiftKey);
 
   let shortcut = display::keyboard(&payload.key, &modifiers);
   let state = window.state::<PluginState<R>>();
