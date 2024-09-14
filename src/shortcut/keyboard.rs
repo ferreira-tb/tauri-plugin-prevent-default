@@ -35,7 +35,7 @@ impl<R: Runtime> KeyboardShortcut<R> {
   /// # Example
   /// ```
   /// use tauri_plugin_prevent_default::KeyboardShortcut;
-  /// use tauri_plugin_prevent_default::ModifierKey::{AltKey};
+  /// use tauri_plugin_prevent_default::ModifierKey::AltKey;
   ///
   /// // Both of these are equivalent.
   /// tauri_plugin_prevent_default::Builder::new()
