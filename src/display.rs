@@ -11,6 +11,7 @@ pub(crate) fn keyboard(key: &str, modifiers: &[ModifierKey]) -> String {
       ModifierKey::CtrlKey => string.push_str("ctrl+"),
       ModifierKey::ShiftKey => string.push_str("shift+"),
       ModifierKey::AltKey => string.push_str("alt+"),
+      ModifierKey::MetaKey => string.push_str("meta+"),
     }
   }
 
@@ -24,16 +25,34 @@ pub(crate) fn pointer(event: PointerEvent) -> String {
 
 #[cfg(test)]
 mod test {
-  use crate::shortcut::ModifierKey::{AltKey, CtrlKey, ShiftKey};
+  use crate::shortcut::ModifierKey::{AltKey, CtrlKey, MetaKey, ShiftKey};
   use crate::shortcut::PointerEvent;
 
   #[test]
+  #[rustfmt::skip]
   fn display_keyboard() {
     use super::keyboard as k;
 
-    assert_eq!(k("A", &[]), "keyboard:a");
-    assert_eq!(k("A", &[CtrlKey]), "keyboard:ctrl+a");
-    assert_eq!(k("A", &[ShiftKey, CtrlKey]), "keyboard:ctrl+shift+a");
+    assert_eq!(
+      k("A", &[]),
+      "keyboard:a"
+    );
+    assert_eq!(
+      k("A", &[CtrlKey]),
+      "keyboard:ctrl+a"
+    );
+    assert_eq!(
+      k("A", &[ShiftKey, CtrlKey]),
+      "keyboard:ctrl+shift+a"
+    );
+    assert_eq!(
+      k("A", &[MetaKey, ShiftKey]),
+      "keyboard:shift+meta+a"
+    );
+    assert_eq!(
+      k("A", &[MetaKey, ShiftKey, CtrlKey]),
+      "keyboard:ctrl+shift+meta+a"
+    );
     assert_eq!(
       k("A", &[ShiftKey, AltKey, CtrlKey]),
       "keyboard:ctrl+shift+alt+a"
@@ -43,8 +62,16 @@ mod test {
       "keyboard:ctrl+shift+alt+a"
     );
     assert_eq!(
+      k("A", &[MetaKey, ShiftKey, AltKey, CtrlKey]),
+      "keyboard:ctrl+shift+alt+meta+a"
+    );
+    assert_eq!(
       k("A", &[ShiftKey, AltKey, CtrlKey, CtrlKey, ShiftKey]),
       "keyboard:ctrl+shift+alt+a"
+    );
+    assert_eq!(
+      k("A", &[ShiftKey, MetaKey, AltKey, CtrlKey, MetaKey]),
+      "keyboard:ctrl+shift+alt+meta+a"
     );
   }
 

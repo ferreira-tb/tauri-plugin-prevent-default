@@ -22,7 +22,7 @@ impl<R: Runtime> EventListener<R> {
   }
 
   pub(crate) fn call(&self, window: &Window<R>) {
-    (self.inner)(window)
+    (self.inner)(window);
   }
 }
 
@@ -45,7 +45,7 @@ impl<R: Runtime> Eq for EventListener<R> {}
 
 impl<R: Runtime> hash::Hash for EventListener<R> {
   fn hash<H: hash::Hasher>(&self, state: &mut H) {
-    self.id.hash(state)
+    self.id.hash(state);
   }
 }
 

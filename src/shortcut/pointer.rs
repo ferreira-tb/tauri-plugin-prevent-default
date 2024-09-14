@@ -22,10 +22,12 @@ impl<R: Runtime> PointerShortcut<R> {
     Self { event, listeners: Vec::new() }
   }
 
+  /// Initialize a new pointer shortcut builder with the specified event.
   pub fn builder(event: PointerEvent) -> PointerShortcutBuilder<R> {
     PointerShortcutBuilder::new(event)
   }
 
+  /// Create a new pointer shortcut with the specified event and listener.
   pub fn with_listener<F>(event: PointerEvent, listener: F) -> Self
   where
     F: Fn(&Window<R>) + Send + Sync + 'static,
@@ -33,6 +35,7 @@ impl<R: Runtime> PointerShortcut<R> {
     Self::builder(event).on(listener).build()
   }
 
+  /// The event of the shortcut.
   pub fn event(&self) -> PointerEvent {
     self.event
   }
@@ -56,6 +59,7 @@ impl<R: Runtime> PointerShortcutBuilder<R> {
   }
 
   /// Set a listener for the shortcut.
+  #[must_use]
   pub fn on<F>(mut self, listener: F) -> Self
   where
     F: Fn(&Window<R>) + Send + Sync + 'static,
@@ -65,6 +69,7 @@ impl<R: Runtime> PointerShortcutBuilder<R> {
     self
   }
 
+  /// Build the pointer shortcut.
   pub fn build(self) -> PointerShortcut<R> {
     PointerShortcut {
       event: self.event,

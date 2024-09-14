@@ -8,7 +8,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tauri-plugin-prevent-default = 0.4
+//! tauri-plugin-prevent-default = 0.5
 //! ```
 //!
 //! If using custom listeners, you must also enable the required permissions:
@@ -81,6 +81,7 @@
 //! tauri_plugin_prevent_default::Builder::new()
 //!   .shortcut(KeyboardShortcut::new("F12"))
 //!   .shortcut(KeyboardShortcut::with_modifiers("E", &[CtrlKey, ShiftKey]))
+//!   .shortcut(KeyboardShortcut::with_shift_alt("I"))
 //!   .build();
 //! ```
 //!
@@ -105,7 +106,7 @@
 //!
 //! #[cfg(not(debug_assertions))]
 //! fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
-//!   tauri_plugin_prevent_default::Builder::new().build()
+//!   tauri_plugin_prevent_default::init()
 //! }
 //! ```
 //!
@@ -214,6 +215,7 @@ impl<R: Runtime> Builder<R> {
   ///   .with_flags(Flags::CONTEXT_MENU | Flags::PRINT | Flags::DOWNLOADS)
   ///   .build();
   /// ```
+  #[must_use]
   pub fn with_flags(mut self, flags: Flags) -> Self {
     self.flags = flags;
     self
@@ -229,8 +231,10 @@ impl<R: Runtime> Builder<R> {
   /// tauri_plugin_prevent_default::Builder::new()
   ///   .shortcut(KeyboardShortcut::new("F12"))
   ///   .shortcut(KeyboardShortcut::with_modifiers("E", &[CtrlKey, ShiftKey]))
+  ///   .shortcut(KeyboardShortcut::with_shift_alt("I"))
   ///   .build();
   /// ```
+  #[must_use]
   pub fn shortcut<S>(mut self, shortcut: S) -> Self
   where
     S: Shortcut<R> + 'static,
@@ -240,6 +244,7 @@ impl<R: Runtime> Builder<R> {
   }
 
   /// Check location origin before disabling the shortcuts.
+  #[must_use]
   pub fn check_origin(mut self, origin: impl AsRef<str>) -> Self {
     self.check_origin = origin.as_ref().to_owned().into();
     self
@@ -320,7 +325,7 @@ impl<R: Runtime> Builder<R> {
         .setup(|app, _| {
           app.manage(state);
           Ok(())
-        })
+        });
     }
 
     builder.js_init_script(script).build()
