@@ -8,7 +8,7 @@ documentation = "https://docs.rs/tauri-plugin-prevent-default"
 authors = ["Andrew Ferreira <andrew.shien2@gmail.com>"]
 license = "MIT"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.71"
 keywords = ["plugin", "tauri", "tauri-plugin"]
 links = "tauri-plugin-prevent-default"
 
