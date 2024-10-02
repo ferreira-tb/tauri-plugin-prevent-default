@@ -1,8 +1,6 @@
 # Logs
 logs
 *.log
-npm-debug.log*
-pnpm-debug.log*
 
 # Editor directories and files
 .vscode/*
