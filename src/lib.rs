@@ -8,7 +8,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tauri-plugin-prevent-default = 0.5
+//! tauri-plugin-prevent-default = 0.6
 //! ```
 //!
 //! If using custom listeners, you must also enable the required permissions:
@@ -311,9 +311,6 @@ impl<R: Runtime> Builder<R> {
     } else {
       script = script.replace("/*EMIT*/", "const EMIT=true;");
     }
-
-    #[cfg(feature = "tracing")]
-    tracing::trace!(script);
 
     let mut builder = PluginBuilder::new("prevent-default");
     if !state.listeners.is_empty() {
