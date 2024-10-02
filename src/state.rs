@@ -18,9 +18,6 @@ impl<R: Runtime> PluginState<R> {
   pub(crate) fn call_listeners(&self, shortcut: &str, window: &Window<R>) {
     if let Some(listeners) = self.listeners.get(shortcut) {
       for listener in listeners {
-        #[cfg(feature = "tracing")]
-        tracing::trace!(shortcut, window = window.label(), ?listener);
-
         listener.call(window);
       }
     }

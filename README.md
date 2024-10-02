@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 0.5
+tauri-plugin-prevent-default = 0.6
 ```
 
 If using custom listeners, you must also enable the required permissions:
@@ -116,4 +116,4 @@ The plugin should work fine on Windows, but there are still tests to be done on 
 
 ## Supported Tauri Version
 
-This plugin requires Tauri `2.0.0-rc` or later.
+This plugin requires Tauri `2.0` or later.

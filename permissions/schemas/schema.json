@@ -295,39 +295,29 @@
       "type": "string",
       "oneOf": [
         {
-          "description": "allow-keyboard -> Enables the keyboard command without any pre-configured scope.",
+          "description": "Enables the keyboard command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "allow-keyboard"
-          ]
+          "const": "allow-keyboard"
         },
         {
-          "description": "deny-keyboard -> Denies the keyboard command without any pre-configured scope.",
+          "description": "Denies the keyboard command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "deny-keyboard"
-          ]
+          "const": "deny-keyboard"
         },
         {
-          "description": "allow-pointer -> Enables the pointer command without any pre-configured scope.",
+          "description": "Enables the pointer command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "allow-pointer"
-          ]
+          "const": "allow-pointer"
         },
         {
-          "description": "deny-pointer -> Denies the pointer command without any pre-configured scope.",
+          "description": "Denies the pointer command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "deny-pointer"
-          ]
+          "const": "deny-pointer"
         },
         {
-          "description": "default -> Default permissions for the prevent-default plugin",
+          "description": "Default permissions for the prevent-default plugin",
           "type": "string",
-          "enum": [
-            "default"
-          ]
+          "const": "default"
         }
       ]
     }

@@ -17,9 +17,6 @@ pub(crate) struct KeyboardPayload {
 
 #[tauri::command]
 pub(crate) async fn keyboard<R: Runtime>(window: Window<R>, payload: KeyboardPayload) {
-  #[cfg(feature = "tracing")]
-  tracing::trace!(kind = "keyboard", window = window.label(), ?payload);
-
   let mut modifiers = Vec::new();
   macro_rules! push {
     ($modifier:ident, $variant:ident) => {
@@ -48,9 +45,6 @@ pub(crate) struct PointerPayload {
 
 #[tauri::command]
 pub(crate) async fn pointer<R: Runtime>(window: Window<R>, payload: PointerPayload) {
-  #[cfg(feature = "tracing")]
-  tracing::trace!(kind = "pointer", window = window.label(), ?payload);
-
   let name = payload.name.as_str();
   if let Ok(event) = PointerEvent::try_from(name) {
     let state = window.state::<PluginState<R>>();
