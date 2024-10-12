@@ -114,7 +114,7 @@
 //!
 //! ```rust
 //! tauri_plugin_prevent_default::Builder::new()
-//!   .form_autofill(false)
+//!   .general_autofill(false)
 //!   .build()
 //! ```
 //!
@@ -200,7 +200,7 @@ pub struct Builder<R: Runtime> {
   check_origin: Option<String>,
 
   #[cfg(all(windows, feature = "unstable-native-windows"))]
-  form_autofill: bool,
+  general_autofill: bool,
   #[cfg(all(windows, feature = "unstable-native-windows"))]
   password_autosave: bool,
 }
@@ -213,7 +213,7 @@ impl<R: Runtime> Default for Builder<R> {
       check_origin: None,
 
       #[cfg(all(windows, feature = "unstable-native-windows"))]
-      form_autofill: true,
+      general_autofill: true,
       #[cfg(all(windows, feature = "unstable-native-windows"))]
       password_autosave: false,
     }
@@ -276,8 +276,8 @@ impl<R: Runtime> Builder<R> {
   #[must_use]
   #[cfg(all(windows, feature = "unstable-native-windows"))]
   #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
-  pub fn form_autofill(mut self, enabled: bool) -> Self {
-    self.form_autofill = enabled;
+  pub fn general_autofill(mut self, enabled: bool) -> Self {
+    self.general_autofill = enabled;
     self
   }
 
@@ -372,7 +372,7 @@ impl<R: Runtime> Builder<R> {
       use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
       use windows::core::Interface;
 
-      let general_autofill = self.form_autofill;
+      let general_autofill = self.general_autofill;
       let password_autosave = self.password_autosave;
 
       builder = builder.on_webview_ready(move |webview| {

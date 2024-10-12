@@ -114,7 +114,7 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
 ```rust
 tauri_plugin_prevent_default::Builder::new()
-  .form_autofill(false)
+  .general_autofill(false)
   .build()
 ```
 
