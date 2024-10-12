@@ -8,7 +8,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! tauri-plugin-prevent-default = 0.6
+//! tauri-plugin-prevent-default = 0.7
 //! ```
 //!
 //! If using custom listeners, you must also enable the required permissions:
@@ -51,7 +51,7 @@
 //!   .expect("error while running tauri application");
 //! ```
 //!
-//! Disable all but a few:
+//! - Disable all but a few:
 //!
 //! ```rust
 //! use tauri_plugin_prevent_default::Flags;
@@ -62,7 +62,7 @@
 //!   .build()
 //! ```
 //!
-//! Disable only keyboard shortcuts:
+//! - Disable only keyboard shortcuts:
 //!
 //! ```rust
 //! use tauri_plugin_prevent_default::Flags;
@@ -72,7 +72,7 @@
 //!   .build()
 //! ```
 //!
-//! Disable custom shortcuts:
+//! - Disable custom shortcuts:
 //!
 //! ```rust
 //! use tauri_plugin_prevent_default::KeyboardShortcut;
@@ -85,7 +85,7 @@
 //!   .build();
 //! ```
 //!
-//! Keep certain shortcuts enabled only when in dev mode:
+//! - Keep certain shortcuts enabled only when in dev mode:
 //!
 //! ```rust
 //! fn main() {
@@ -110,13 +110,23 @@
 //! }
 //! ```
 //!
+//! - **WINDOWS ONLY**: Disable form information from being saved and autofilled:
+//!
+//! ```rust
+//! tauri_plugin_prevent_default::Builder::new()
+//!   .form_autofill(false)
+//!   .build()
+//! ```
+//!
 //! ## Note
 //!
 //! The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 //!
+//! ## Supported Tauri Version
+//!
+//! This plugin requires Tauri `2.0` or later.
 
-#![forbid(unsafe_code)]
-#![cfg(not(any(target_os = "android", target_os = "ios")))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 mod command;
 mod display;
@@ -188,6 +198,11 @@ pub struct Builder<R: Runtime> {
   flags: Flags,
   shortcuts: Vec<Box<dyn Shortcut<R>>>,
   check_origin: Option<String>,
+
+  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  form_autofill: bool,
+  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  password_autosave: bool,
 }
 
 impl<R: Runtime> Default for Builder<R> {
@@ -196,6 +211,11 @@ impl<R: Runtime> Default for Builder<R> {
       flags: Flags::default(),
       shortcuts: Vec::new(),
       check_origin: None,
+
+      #[cfg(all(windows, feature = "unstable-native-windows"))]
+      form_autofill: true,
+      #[cfg(all(windows, feature = "unstable-native-windows"))]
+      password_autosave: false,
     }
   }
 }
@@ -247,6 +267,28 @@ impl<R: Runtime> Builder<R> {
   #[must_use]
   pub fn check_origin(mut self, origin: impl AsRef<str>) -> Self {
     self.check_origin = origin.as_ref().to_owned().into();
+    self
+  }
+
+  /// Determine whether general form information will be saved and autofilled.
+  ///
+  /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.isgeneralautofillenabled>
+  #[must_use]
+  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
+  pub fn form_autofill(mut self, enabled: bool) -> Self {
+    self.form_autofill = enabled;
+    self
+  }
+
+  /// Determine whether password information will be autosaved.
+  ///
+  /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.ispasswordautosaveenabled>
+  #[must_use]
+  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
+  pub fn password_autosave(mut self, enabled: bool) -> Self {
+    self.password_autosave = enabled;
     self
   }
 
@@ -323,6 +365,31 @@ impl<R: Runtime> Builder<R> {
           app.manage(state);
           Ok(())
         });
+    }
+
+    #[cfg(all(windows, feature = "unstable-native-windows"))]
+    {
+      use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
+      use windows::core::Interface;
+
+      let general_autofill = self.form_autofill;
+      let password_autosave = self.password_autosave;
+
+      builder = builder.on_webview_ready(move |webview| {
+        let _ = webview.with_webview(move |platform_webview| unsafe {
+          let settings = platform_webview
+            .controller()
+            .CoreWebView2()
+            .expect("failed to get ICoreWebView2")
+            .Settings()
+            .expect("failed to get ICoreWebView2Settings")
+            .cast::<ICoreWebView2Settings4>()
+            .expect("failed to cast to ICoreWebView2Settings4");
+
+          let _ = settings.SetIsGeneralAutofillEnabled(general_autofill);
+          let _ = settings.SetIsPasswordAutosaveEnabled(password_autosave);
+        });
+      });
     }
 
     builder.js_init_script(script).build()

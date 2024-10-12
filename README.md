@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 0.6
+tauri-plugin-prevent-default = 0.7
 ```
 
 If using custom listeners, you must also enable the required permissions:
@@ -51,7 +51,7 @@ tauri::Builder::default()
   .expect("error while running tauri application");
 ```
 
-Disable all but a few:
+- Disable all but a few:
 
 ```rust
 use tauri_plugin_prevent_default::Flags;
@@ -62,7 +62,7 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
-Disable only keyboard shortcuts:
+- Disable only keyboard shortcuts:
 
 ```rust
 use tauri_plugin_prevent_default::Flags;
@@ -72,7 +72,7 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
-Disable custom shortcuts:
+- Disable custom shortcuts:
 
 ```rust
 use tauri_plugin_prevent_default::KeyboardShortcut;
@@ -85,7 +85,7 @@ tauri_plugin_prevent_default::Builder::new()
   .build();
 ```
 
-Keep certain shortcuts enabled only when in dev mode:
+- Keep certain shortcuts enabled only when in dev mode:
 
 ```rust
 fn main() {
@@ -108,6 +108,14 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
   tauri_plugin_prevent_default::init()
 }
+```
+
+- **WINDOWS ONLY**: Disable form information from being saved and autofilled:
+
+```rust
+tauri_plugin_prevent_default::Builder::new()
+  .form_autofill(false)
+  .build()
 ```
 
 ## Note
