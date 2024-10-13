@@ -199,9 +199,9 @@ pub struct Builder<R: Runtime> {
   shortcuts: Vec<Box<dyn Shortcut<R>>>,
   check_origin: Option<String>,
 
-  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg(feature = "unstable-native-windows")]
   general_autofill: bool,
-  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg(feature = "unstable-native-windows")]
   password_autosave: bool,
 }
 
@@ -212,9 +212,9 @@ impl<R: Runtime> Default for Builder<R> {
       shortcuts: Vec::new(),
       check_origin: None,
 
-      #[cfg(all(windows, feature = "unstable-native-windows"))]
+      #[cfg(feature = "unstable-native-windows")]
       general_autofill: true,
-      #[cfg(all(windows, feature = "unstable-native-windows"))]
+      #[cfg(feature = "unstable-native-windows")]
       password_autosave: false,
     }
   }
@@ -274,7 +274,7 @@ impl<R: Runtime> Builder<R> {
   ///
   /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.isgeneralautofillenabled>
   #[must_use]
-  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg(feature = "unstable-native-windows")]
   #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
   pub fn general_autofill(mut self, enabled: bool) -> Self {
     self.general_autofill = enabled;
@@ -285,7 +285,7 @@ impl<R: Runtime> Builder<R> {
   ///
   /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.ispasswordautosaveenabled>
   #[must_use]
-  #[cfg(all(windows, feature = "unstable-native-windows"))]
+  #[cfg(feature = "unstable-native-windows")]
   #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
   pub fn password_autosave(mut self, enabled: bool) -> Self {
     self.password_autosave = enabled;
@@ -367,7 +367,7 @@ impl<R: Runtime> Builder<R> {
         });
     }
 
-    #[cfg(all(windows, feature = "unstable-native-windows"))]
+    #[cfg(feature = "unstable-native-windows")]
     {
       use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
       use windows::core::Interface;
