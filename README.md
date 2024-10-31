@@ -110,11 +110,25 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 }
 ```
 
-- **WINDOWS ONLY**: Disable form information from being saved and autofilled:
+## Platform-specific options
+
+### Windows
+
+The `unstable-native-windows` feature must be enabled.
+
+```toml
+[dependencies]
+tauri-plugin-prevent-default = { version = "0.7", features = ["unstable-native-windows"] }
+```
 
 ```rust
 tauri_plugin_prevent_default::Builder::new()
+  // Whether general form information should be saved and autofilled.
+  // Defaults to `true`.
   .general_autofill(false)
+  // Whether password information should be autosaved.
+  // Defaults to `false`.
+  .password_autosave(false)
   .build()
 ```
 
