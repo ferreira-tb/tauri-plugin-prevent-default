@@ -9,19 +9,16 @@ mod shortcut;
 mod state;
 
 use bitflags::bitflags;
+use state::PluginState;
+use std::collections::HashSet;
+use tauri::plugin::{Builder as PluginBuilder, TauriPlugin};
+use tauri::{Manager, Runtime};
+
 pub use error::Error;
 pub use shortcut::{
   KeyboardShortcut, KeyboardShortcutBuilder, ModifierKey, PointerEvent, PointerShortcut,
   PointerShortcutBuilder, Shortcut, ShortcutKind,
 };
-use state::PluginState;
-use tauri::plugin::{Builder as PluginBuilder, TauriPlugin};
-use tauri::{Manager, Runtime};
-
-#[cfg(feature = "ahash")]
-use ahash::{HashSet, HashSetExt};
-#[cfg(not(feature = "ahash"))]
-use std::collections::HashSet;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -196,17 +193,9 @@ impl<R: Runtime> Builder<R> {
         if let Some(it) = state.listeners.get_mut(&shortcut) {
           it.extend(listeners);
         } else {
-          #[cfg(feature = "ahash")]
-          let set = {
-            let mut set = HashSet::new();
-            set.extend(listeners);
-            set
-          };
-
-          #[cfg(not(feature = "ahash"))]
-          let set = HashSet::from_iter(listeners);
-
-          state.listeners.insert(shortcut, set);
+          state
+            .listeners
+            .insert(shortcut, HashSet::from_iter(listeners));
         }
       }
     }
