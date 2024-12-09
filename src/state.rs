@@ -1,10 +1,6 @@
 use crate::listener::EventListener;
-use tauri::{Runtime, Window};
-
-#[cfg(feature = "ahash")]
-use ahash::{HashMap, HashMapExt, HashSet};
-#[cfg(not(feature = "ahash"))]
 use std::collections::{HashMap, HashSet};
+use tauri::{Runtime, Window};
 
 pub(crate) struct PluginState<R: Runtime> {
   pub(crate) listeners: HashMap<String, HashSet<EventListener<R>>>,
@@ -17,9 +13,9 @@ impl<R: Runtime> PluginState<R> {
 
   pub(crate) fn call_listeners(&self, shortcut: &str, window: &Window<R>) {
     if let Some(listeners) = self.listeners.get(shortcut) {
-      for listener in listeners {
-        listener.call(window);
-      }
+      listeners
+        .iter()
+        .for_each(|listener| listener.call(window));
     }
   }
 }
