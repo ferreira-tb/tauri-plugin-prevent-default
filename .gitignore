@@ -14,7 +14,6 @@ debug/
 target/
 **/*.rs.bk
 *.pdb
-Cargo.lock
 
 # Tauri
 **/gen
