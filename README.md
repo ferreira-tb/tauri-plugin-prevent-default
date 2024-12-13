@@ -132,6 +132,10 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
+## Experimental features
+
+[Cargo features](https://doc.rust-lang.org/cargo/reference/features.html) prefixed with `unstable-` are experimental and may introduce breaking changes between patch versions or even be completely removed.
+
 ## Note
 
 The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
