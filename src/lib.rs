@@ -8,6 +8,9 @@ mod listener;
 mod shortcut;
 mod state;
 
+#[cfg(all(target_os = "windows", feature = "unstable-native-windows"))]
+mod platform;
+
 use bitflags::bitflags;
 use state::PluginState;
 use std::collections::HashSet;
@@ -229,28 +232,17 @@ impl<R: Runtime> Builder<R> {
         });
     }
 
-    #[cfg(feature = "unstable-native-windows")]
+    #[cfg(all(target_os = "windows", feature = "unstable-native-windows"))]
     {
-      use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
-      use windows::core::Interface;
+      use platform::windows::{on_webview_ready, WebviewSettings};
 
-      let general_autofill = self.general_autofill;
-      let password_autosave = self.password_autosave;
+      let settings = WebviewSettings {
+        general_autofill: self.general_autofill,
+        password_autosave: self.password_autosave,
+      };
 
       builder = builder.on_webview_ready(move |webview| {
-        let _ = webview.with_webview(move |platform_webview| unsafe {
-          let settings = platform_webview
-            .controller()
-            .CoreWebView2()
-            .expect("failed to get ICoreWebView2")
-            .Settings()
-            .expect("failed to get ICoreWebView2Settings")
-            .cast::<ICoreWebView2Settings4>()
-            .expect("failed to cast to ICoreWebView2Settings4");
-
-          let _ = settings.SetIsGeneralAutofillEnabled(general_autofill);
-          let _ = settings.SetIsPasswordAutosaveEnabled(password_autosave);
-        });
+        on_webview_ready(&webview, &settings);
       });
     }
 
