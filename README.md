@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = 1.0
+tauri-plugin-prevent-default = "1.0.1"
 ```
 
 If using custom listeners, you must also enable the required permissions:
