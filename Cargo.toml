@@ -62,4 +62,4 @@ version = "2.0"
 features = ["build"]
 
 [features]
-unstable-native-windows = ["dep:windows", "dep:webview2-com"]
+unstable-windows = ["dep:windows", "dep:webview2-com"]

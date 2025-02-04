@@ -8,7 +8,7 @@ mod listener;
 mod shortcut;
 mod state;
 
-#[cfg(all(target_os = "windows", feature = "unstable-native-windows"))]
+#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
 mod platform;
 
 use bitflags::bitflags;
@@ -22,6 +22,9 @@ pub use shortcut::{
   KeyboardShortcut, KeyboardShortcutBuilder, ModifierKey, PointerEvent, PointerShortcut,
   PointerShortcutBuilder, Shortcut, ShortcutKind,
 };
+
+#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+pub use platform::windows::WindowsOptions;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -81,10 +84,8 @@ pub struct Builder<R: Runtime> {
   shortcuts: Vec<Box<dyn Shortcut<R>>>,
   check_origin: Option<String>,
 
-  #[cfg(feature = "unstable-native-windows")]
-  general_autofill: bool,
-  #[cfg(feature = "unstable-native-windows")]
-  password_autosave: bool,
+  #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+  platform: WindowsOptions,
 }
 
 impl<R: Runtime> Default for Builder<R> {
@@ -94,10 +95,8 @@ impl<R: Runtime> Default for Builder<R> {
       shortcuts: Vec::new(),
       check_origin: None,
 
-      #[cfg(feature = "unstable-native-windows")]
-      general_autofill: true,
-      #[cfg(feature = "unstable-native-windows")]
-      password_autosave: false,
+      #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+      platform: WindowsOptions::default(),
     }
   }
 }
@@ -152,25 +151,12 @@ impl<R: Runtime> Builder<R> {
     self
   }
 
-  /// Determine whether general form information will be saved and autofilled.
-  ///
-  /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.isgeneralautofillenabled>
+  /// Windows-specific options.
   #[must_use]
-  #[cfg(feature = "unstable-native-windows")]
-  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
-  pub fn general_autofill(mut self, enabled: bool) -> Self {
-    self.general_autofill = enabled;
-    self
-  }
-
-  /// Determine whether password information will be autosaved.
-  ///
-  /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.ispasswordautosaveenabled>
-  #[must_use]
-  #[cfg(feature = "unstable-native-windows")]
-  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-native-windows")))]
-  pub fn password_autosave(mut self, enabled: bool) -> Self {
-    self.password_autosave = enabled;
+  #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-windows")))]
+  pub fn platform(mut self, options: WindowsOptions) -> Self {
+    self.platform = options;
     self
   }
 
@@ -241,17 +227,10 @@ impl<R: Runtime> Builder<R> {
         });
     }
 
-    #[cfg(all(target_os = "windows", feature = "unstable-native-windows"))]
+    #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
     {
-      use platform::windows::{on_webview_ready, WebviewSettings};
-
-      let settings = WebviewSettings {
-        general_autofill: self.general_autofill,
-        password_autosave: self.password_autosave,
-      };
-
       builder = builder.on_webview_ready(move |webview| {
-        on_webview_ready(&webview, &settings);
+        platform::windows::on_webview_ready(&webview, &self.platform);
       });
     }
 
