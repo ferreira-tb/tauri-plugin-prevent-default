@@ -59,6 +59,15 @@ impl Flags {
   pub fn pointer() -> Self {
     Self::CONTEXT_MENU
   }
+
+  /// Keep `DEV_TOOLS` and `RELOAD` shortcuts enabled when in debug mode.
+  pub fn debug() -> Self {
+    if cfg!(debug_assertions) {
+      Self::all().difference(Self::DEV_TOOLS | Self::RELOAD)
+    } else {
+      Self::all()
+    }
+  }
 }
 
 impl Default for Flags {
