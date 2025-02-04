@@ -114,21 +114,23 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 
 ### Windows
 
-The `unstable-native-windows` feature must be enabled.
+The `unstable-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "1.1", features = ["unstable-native-windows"] }
+tauri-plugin-prevent-default = { version = "1.1", features = ["unstable-windows"] }
 ```
 
 ```rust
+use tauri_plugin_prevent_default::WindowsOptions;
+
 tauri_plugin_prevent_default::Builder::new()
-  // Whether general form information should be saved and autofilled.
-  // Defaults to `true`.
-  .general_autofill(false)
-  // Whether password information should be autosaved.
-  // Defaults to `false`.
-  .password_autosave(false)
+  .platform(WindowsOptions {
+    // Whether general form information should be saved and autofilled.
+    general_autofill: true,
+    // Whether password information should be autosaved.
+    password_autosave: false,
+  })
   .build()
 ```
 
