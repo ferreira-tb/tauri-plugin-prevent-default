@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "1.1"
+tauri-plugin-prevent-default = "1.2"
 ```
 
 If using custom listeners, you must also enable the required permissions:
@@ -118,7 +118,7 @@ The `unstable-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "1.1", features = ["unstable-windows"] }
+tauri-plugin-prevent-default = { version = "1.2", features = ["unstable-windows"] }
 ```
 
 ```rust
