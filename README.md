@@ -134,6 +134,30 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
+### MacOS + iOS
+
+The `unstable-webkit` feature must be enabled.
+
+```toml
+[dependencies]
+tauri-plugin-prevent-default = { version = "1.2", features = ["unstable-webkit"] }
+```
+
+If the `unstable-webkit` feature is enabled the following will be set:
+
+- [allowsLinkPreview](https://developer.apple.com/documentation/webkit/wkwebview/allowslinkpreview?language=objc) defaults to `false`
+
+```rust
+use tauri_plugin_prevent_default::WebkitOptions;
+
+tauri_plugin_prevent_default::Builder::new()
+  .platform(WebkitOptions {
+    // Whether long pressing a link displays a preview of the destination for the link.
+    allows_link_preview: true,
+  })
+  .build()
+```
+
 ## Experimental features
 
 [Cargo features](https://doc.rust-lang.org/cargo/reference/features.html) prefixed with `unstable` are experimental and may introduce breaking changes between minor versions.
