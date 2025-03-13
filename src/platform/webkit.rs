@@ -1,4 +1,8 @@
+#[cfg(target_os = "ios")]
+use crate::platform::ios::WKWebView::WKWebView;
+#[cfg(target_os = "macos")]
 use objc2_web_kit::WKWebView;
+
 use tauri::{Runtime, Webview};
 
 pub struct WebkitOptions {

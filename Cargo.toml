@@ -61,6 +61,26 @@ optional = true
 version = "0.3"
 optional = true
 
+[target.'cfg(target_os = "ios")'.dependencies.objc2]
+version = "0.6"
+optional = true
+
+[target.'cfg(target_os = "ios")'.dependencies.objc2-foundation]
+version = "0.3"
+optional = true
+
+[target.'cfg(target_os = "ios")'.dependencies.objc2-core-foundation]
+version = "0.3"
+optional = true
+
+[target.'cfg(target_os = "ios")'.dependencies.objc2-ui-kit]
+version = "0.3"
+optional = true
+
+[target.'cfg(target_os = "ios")'.dependencies.block2]
+version = "0.6"
+optional = true
+
 [build-dependencies.tauri-plugin]
 version = "2.0"
 features = ["build"]
