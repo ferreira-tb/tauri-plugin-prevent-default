@@ -57,28 +57,8 @@ optional = true
 version = "0.60"
 optional = true
 
-[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies.objc2-web-kit]
+[target.'cfg(target_os = "macos")'.dependencies.objc2-web-kit]
 version = "0.3"
-optional = true
-
-[target.'cfg(target_os = "ios")'.dependencies.objc2]
-version = "0.6"
-optional = true
-
-[target.'cfg(target_os = "ios")'.dependencies.objc2-foundation]
-version = "0.3"
-optional = true
-
-[target.'cfg(target_os = "ios")'.dependencies.objc2-core-foundation]
-version = "0.3"
-optional = true
-
-[target.'cfg(target_os = "ios")'.dependencies.objc2-ui-kit]
-version = "0.3"
-optional = true
-
-[target.'cfg(target_os = "ios")'.dependencies.block2]
-version = "0.6"
 optional = true
 
 [build-dependencies.tauri-plugin]
@@ -87,11 +67,4 @@ features = ["build"]
 
 [features]
 unstable-windows = ["dep:webview2-com", "dep:windows"]
-unstable-webkit = [
-  "dep:objc2-web-kit",
-  "dep:objc2",
-  "dep:objc2-foundation",
-  "dep:objc2-core-foundation",
-  "dep:objc2-ui-kit",
-  "dep:block2",
-]
+unstable-macos = ["dep:objc2-web-kit"]

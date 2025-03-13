@@ -12,7 +12,7 @@ mod state;
   all(target_os = "windows", feature = "unstable-windows"),
   all(
     any(target_os = "macos", target_os = "ios"),
-    feature = "unstable-webkit"
+    // feature = "unstable-webkit"
   )
 ))]
 mod platform;
@@ -32,11 +32,8 @@ pub use shortcut::{
 #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
 pub use platform::windows::WindowsOptions;
 
-#[cfg(all(
-  any(target_os = "ios", target_os = "macos"),
-  feature = "unstable-webkit"
-))]
-pub use platform::webkit::WebkitOptions;
+#[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+pub use platform::macos::MacosOptions;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -99,11 +96,8 @@ pub struct Builder<R: Runtime> {
   #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
   platform: WindowsOptions,
 
-  #[cfg(all(
-    any(target_os = "ios", target_os = "macos"),
-    feature = "unstable-webkit"
-  ))]
-  platform: WebkitOptions,
+  #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+  platform: MacosOptions,
 }
 
 impl<R: Runtime> Default for Builder<R> {
@@ -116,11 +110,8 @@ impl<R: Runtime> Default for Builder<R> {
       #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
       platform: WindowsOptions::default(),
 
-      #[cfg(all(
-        any(target_os = "ios", target_os = "macos"),
-        feature = "unstable-webkit"
-      ))]
-      platform: WebkitOptions::default(),
+      #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+      platform: MacosOptions::default(),
     }
   }
 }
@@ -184,14 +175,11 @@ impl<R: Runtime> Builder<R> {
     self
   }
 
-  /// Webkit-specific options.
+  /// MacOS-specific options.
   #[must_use]
-  #[cfg(all(
-    any(target_os = "ios", target_os = "macos"),
-    feature = "unstable-webkit"
-  ))]
-  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-webkit")))]
-  pub fn platform(mut self, options: WebkitOptions) -> Self {
+  #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-macos")))]
+  pub fn platform(mut self, options: MacosOptions) -> Self {
     self.platform = options;
     self
   }
@@ -270,13 +258,10 @@ impl<R: Runtime> Builder<R> {
       });
     }
 
-    #[cfg(all(
-      any(target_os = "ios", target_os = "macos"),
-      feature = "unstable-webkit"
-    ))]
+    #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
     {
       builder = builder.on_webview_ready(move |webview| {
-        platform::webkit::on_webview_ready(&webview, &self.platform);
+        platform::macos::on_webview_ready(&webview, &self.platform);
       });
     }
 

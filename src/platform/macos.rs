@@ -1,24 +1,22 @@
-#[cfg(target_os = "ios")]
-use crate::platform::ios::WKWebView::WKWebView;
 #[cfg(target_os = "macos")]
 use objc2_web_kit::WKWebView;
 
 use tauri::{Runtime, Webview};
 
-pub struct WebkitOptions {
+pub struct MacosOptions {
   /// Determine whether pressing a link displays a preview of the destination for the link.
   ///
   /// <https://developer.apple.com/documentation/webkit/wkwebview/allowslinkpreview?language=objc>
   pub allows_link_preview: bool,
 }
 
-impl Default for WebkitOptions {
+impl Default for MacosOptions {
   fn default() -> Self {
     Self { allows_link_preview: false }
   }
 }
 
-pub(crate) fn on_webview_ready<R>(webview: &Webview<R>, options: &WebkitOptions)
+pub(crate) fn on_webview_ready<R>(webview: &Webview<R>, options: &MacosOptions)
 where
   R: Runtime,
 {
