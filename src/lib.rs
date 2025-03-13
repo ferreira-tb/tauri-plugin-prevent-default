@@ -8,7 +8,13 @@ mod listener;
 mod shortcut;
 mod state;
 
-#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+#[cfg(any(
+  all(target_os = "windows", feature = "unstable-windows"),
+  all(
+    any(target_os = "macos", target_os = "ios"),
+    // feature = "unstable-webkit"
+  )
+))]
 mod platform;
 
 use bitflags::bitflags;
@@ -25,6 +31,9 @@ pub use shortcut::{
 
 #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
 pub use platform::windows::WindowsOptions;
+
+#[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+pub use platform::macos::MacosOptions;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -86,6 +95,9 @@ pub struct Builder<R: Runtime> {
 
   #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
   platform: WindowsOptions,
+
+  #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+  platform: MacosOptions,
 }
 
 impl<R: Runtime> Default for Builder<R> {
@@ -97,6 +109,9 @@ impl<R: Runtime> Default for Builder<R> {
 
       #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
       platform: WindowsOptions::default(),
+
+      #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+      platform: MacosOptions::default(),
     }
   }
 }
@@ -156,6 +171,15 @@ impl<R: Runtime> Builder<R> {
   #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
   #[cfg_attr(docsrs, doc(cfg(feature = "unstable-windows")))]
   pub fn platform(mut self, options: WindowsOptions) -> Self {
+    self.platform = options;
+    self
+  }
+
+  /// MacOS-specific options.
+  #[must_use]
+  #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-macos")))]
+  pub fn platform(mut self, options: MacosOptions) -> Self {
     self.platform = options;
     self
   }
@@ -231,6 +255,13 @@ impl<R: Runtime> Builder<R> {
     {
       builder = builder.on_webview_ready(move |webview| {
         platform::windows::on_webview_ready(&webview, &self.platform);
+      });
+    }
+
+    #[cfg(all(target_os = "macos", feature = "unstable-macos"))]
+    {
+      builder = builder.on_webview_ready(move |webview| {
+        platform::macos::on_webview_ready(&webview, &self.platform);
       });
     }
 
