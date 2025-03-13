@@ -57,9 +57,14 @@ optional = true
 version = "0.60"
 optional = true
 
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies.objc2-web-kit]
+version = "0.3"
+optional = true
+
 [build-dependencies.tauri-plugin]
 version = "2.0"
 features = ["build"]
 
 [features]
 unstable-windows = ["dep:webview2-com", "dep:windows"]
+unstable-webkit = ["dep:objc2-web-kit"]
