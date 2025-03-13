@@ -87,4 +87,11 @@ features = ["build"]
 
 [features]
 unstable-windows = ["dep:webview2-com", "dep:windows"]
-unstable-webkit = ["dep:objc2-web-kit"]
+unstable-webkit = [
+  "dep:objc2-web-kit",
+  "dep:objc2",
+  "dep:objc2-foundation",
+  "dep:objc2-core-foundation",
+  "dep:objc2-ui-kit",
+  "dep:block2",
+]
