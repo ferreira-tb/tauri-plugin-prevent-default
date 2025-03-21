@@ -1,0 +1,24 @@
+name: Test PR
+
+on:
+  pull_request:
+    branches: [master]
+
+env:
+  RUST_BACKTRACE: 1
+
+concurrency:
+  group: test-pr
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: clippy
+
+      - name: Clippy
+        run: cargo +nightly clippy
