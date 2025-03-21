@@ -1,5 +1,6 @@
 #![doc = include_str!("../README.md")]
 #![cfg_attr(docsrs, feature(doc_cfg))]
+#![allow(clippy::format_push_string)]
 
 mod command;
 mod display;
