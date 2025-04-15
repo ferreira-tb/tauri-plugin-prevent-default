@@ -297,27 +297,32 @@
         {
           "description": "Enables the keyboard command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-keyboard"
+          "const": "allow-keyboard",
+          "markdownDescription": "Enables the keyboard command without any pre-configured scope."
         },
         {
           "description": "Denies the keyboard command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-keyboard"
+          "const": "deny-keyboard",
+          "markdownDescription": "Denies the keyboard command without any pre-configured scope."
         },
         {
           "description": "Enables the pointer command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-pointer"
+          "const": "allow-pointer",
+          "markdownDescription": "Enables the pointer command without any pre-configured scope."
         },
         {
           "description": "Denies the pointer command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-pointer"
+          "const": "deny-pointer",
+          "markdownDescription": "Denies the pointer command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the prevent-default plugin",
+          "description": "Default permissions for the prevent-default plugin\n#### This default permission set includes:\n\n- `allow-keyboard`\n- `allow-pointer`",
           "type": "string",
-          "const": "default"
+          "const": "default",
+          "markdownDescription": "Default permissions for the prevent-default plugin\n#### This default permission set includes:\n\n- `allow-keyboard`\n- `allow-pointer`"
         }
       ]
     }

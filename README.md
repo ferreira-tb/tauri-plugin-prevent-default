@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "1.2"
+tauri-plugin-prevent-default = "1.3"
 ```
 
 If using custom listeners, you must also enable the required permissions:
@@ -118,7 +118,7 @@ The `unstable-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "1.2", features = ["unstable-windows"] }
+tauri-plugin-prevent-default = { version = "1.3", features = ["unstable-windows"] }
 ```
 
 ```rust
@@ -137,10 +137,6 @@ tauri_plugin_prevent_default::Builder::new()
 ## Experimental features
 
 [Cargo features](https://doc.rust-lang.org/cargo/reference/features.html) prefixed with `unstable` are experimental and may introduce breaking changes between minor versions.
-
-## Note
-
-The plugin should work fine on Windows, but there are still tests to be done on MacOS and Linux. If you encounter any problems on these platforms, please [open an issue](https://github.com/ferreira-tb/tauri-plugin-prevent-default/issues).
 
 ## Supported Tauri Version
 
