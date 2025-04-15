@@ -1,7 +1,3 @@
 {
-  "recommendations": [
-    "tamasfe.even-better-toml",
-    "rust-lang.rust-analyzer",
-    "tauri-apps.tauri-vscode"
-  ]
+  "recommendations": ["rust-lang.rust-analyzer"]
 }

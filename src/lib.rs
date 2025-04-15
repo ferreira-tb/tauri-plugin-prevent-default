@@ -1,5 +1,5 @@
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![doc = include_str!("../README.md")]
-#![cfg_attr(docsrs, feature(doc_cfg))]
 #![allow(clippy::format_push_string)]
 
 mod command;
@@ -316,4 +316,9 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
 /// Initialize the plugin with given flags.
 pub fn with_flags<R: Runtime>(flags: Flags) -> TauriPlugin<R> {
   Builder::new().with_flags(flags).build()
+}
+
+/// Initialize the plugin with the default [debug flags](Flags::debug).
+pub fn debug<R: Runtime>() -> TauriPlugin<R> {
+  Builder::new().with_flags(Flags::debug()).build()
 }

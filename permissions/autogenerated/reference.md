@@ -2,6 +2,8 @@
 
 Default permissions for the prevent-default plugin
 
+#### This default permission set includes the following:
+
 - `allow-keyboard`
 - `allow-pointer`
 
