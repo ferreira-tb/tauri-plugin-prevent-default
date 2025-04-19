@@ -134,9 +134,9 @@ tauri_plugin_prevent_default::Builder::new()
   .build()
 ```
 
-## Experimental features
+## Versioning and Experimental Features
 
-[Cargo features](https://doc.rust-lang.org/cargo/reference/features.html) prefixed with `unstable` are experimental and may introduce breaking changes between minor versions.
+This plugin adheres to [SemVer](https://semver.org/). However, [features](https://doc.rust-lang.org/cargo/reference/features.html) marked as `unstable` are experimental and may introduce breaking changes between minor versions.
 
 ## Supported Tauri Version
 
