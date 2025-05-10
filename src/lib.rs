@@ -400,7 +400,7 @@ pub fn debug<R: Runtime>() -> TauriPlugin<R> {
 }
 
 /// Initialize the plugin with the default [debug flags](Flags::debug)
-/// while also allowing for manual injection..
+/// while also allowing for manual injection.
 pub fn debug_with_manual_injection<R: Runtime>() -> TauriPlugin<R> {
   Builder::new()
     .with_flags(Flags::debug())
