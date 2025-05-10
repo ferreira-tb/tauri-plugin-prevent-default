@@ -194,7 +194,9 @@ impl Builder {
       .build()
   }
 
+  #[allow(clippy::unused_self)]
   fn plugin_builder<R: Runtime>(self) -> PluginBuilder<R> {
+    #[allow(unused_mut)]
     let mut builder = PluginBuilder::new("prevent-default");
 
     #[cfg(all(target_os = "windows", feature = "unstable-windows"))]

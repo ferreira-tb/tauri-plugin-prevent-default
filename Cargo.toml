@@ -57,5 +57,4 @@ version = "0.61"
 optional = true
 
 [features]
-default = ["unstable-windows"]
 unstable-windows = ["dep:webview2-com", "dep:windows"]
