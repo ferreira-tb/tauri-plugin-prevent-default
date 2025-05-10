@@ -1,8 +1,6 @@
 use crate::display;
-use crate::listener::EventListener;
 use std::fmt;
 use strum::{Display as EnumDisplay, EnumIs, EnumString};
-use tauri::{Runtime, Window};
 
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumDisplay, EnumIs, EnumString)]
@@ -12,27 +10,18 @@ pub enum PointerEvent {
 }
 
 #[derive(Debug)]
-pub struct PointerShortcut<R: Runtime> {
+pub struct PointerShortcut {
   event: PointerEvent,
-  pub(super) listeners: Vec<EventListener<R>>,
 }
 
-impl<R: Runtime> PointerShortcut<R> {
+impl PointerShortcut {
   pub fn new(event: PointerEvent) -> Self {
-    Self { event, listeners: Vec::new() }
+    Self { event }
   }
 
   /// Initialize a new pointer shortcut builder with the specified event.
-  pub fn builder(event: PointerEvent) -> PointerShortcutBuilder<R> {
+  pub fn builder(event: PointerEvent) -> PointerShortcutBuilder {
     PointerShortcutBuilder::new(event)
-  }
-
-  /// Create a new pointer shortcut with the specified event and listener.
-  pub fn with_listener<F>(event: PointerEvent, listener: F) -> Self
-  where
-    F: Fn(&Window<R>) + Send + Sync + 'static,
-  {
-    Self::builder(event).on(listener).build()
   }
 
   /// The event of the shortcut.
@@ -41,39 +30,24 @@ impl<R: Runtime> PointerShortcut<R> {
   }
 }
 
-impl<R: Runtime> fmt::Display for PointerShortcut<R> {
+impl fmt::Display for PointerShortcut {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{}", display::pointer(self.event))
   }
 }
 
 #[derive(Debug)]
-pub struct PointerShortcutBuilder<R: Runtime> {
+pub struct PointerShortcutBuilder {
   event: PointerEvent,
-  listeners: Vec<EventListener<R>>,
 }
 
-impl<R: Runtime> PointerShortcutBuilder<R> {
+impl PointerShortcutBuilder {
   pub fn new(event: PointerEvent) -> Self {
-    Self { event, listeners: Vec::new() }
-  }
-
-  /// Set a listener for the shortcut.
-  #[must_use]
-  pub fn on<F>(mut self, listener: F) -> Self
-  where
-    F: Fn(&Window<R>) + Send + Sync + 'static,
-  {
-    let listener = EventListener::new(listener);
-    self.listeners.push(listener);
-    self
+    Self { event }
   }
 
   /// Build the pointer shortcut.
-  pub fn build(self) -> PointerShortcut<R> {
-    PointerShortcut {
-      event: self.event,
-      listeners: self.listeners,
-    }
+  pub fn build(self) -> PointerShortcut {
+    PointerShortcut { event: self.event }
   }
 }

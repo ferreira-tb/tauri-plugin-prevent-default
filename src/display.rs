@@ -25,14 +25,14 @@ pub(crate) fn pointer(event: PointerEvent) -> String {
 
 #[cfg(test)]
 mod test {
+  use super::keyboard as k;
+  use super::pointer as p;
   use crate::shortcut::ModifierKey::{AltKey, CtrlKey, MetaKey, ShiftKey};
   use crate::shortcut::PointerEvent;
 
   #[test]
   #[rustfmt::skip]
   fn display_keyboard() {
-    use super::keyboard as k;
-
     assert_eq!(
       k("A", &[]),
       "keyboard:a"
@@ -77,8 +77,6 @@ mod test {
 
   #[test]
   fn display_pointer() {
-    use super::pointer as p;
-
     assert_eq!(p(PointerEvent::ContextMenu), "pointer:contextmenu");
   }
 }

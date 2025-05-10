@@ -2,19 +2,15 @@
 #![doc = include_str!("../README.md")]
 #![allow(clippy::format_push_string)]
 
-mod command;
 mod display;
 mod error;
-mod listener;
 mod shortcut;
-mod state;
 
 #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
 mod platform;
 
 use bitflags::bitflags;
-use state::PluginState;
-use std::collections::HashSet;
+use std::sync::Arc;
 use tauri::plugin::{Builder as PluginBuilder, TauriPlugin};
 use tauri::{Manager, Runtime};
 
@@ -25,7 +21,7 @@ pub use shortcut::{
 };
 
 #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
-pub use platform::windows::WindowsOptions;
+pub use platform::windows::PlatformOptions;
 
 bitflags! {
   #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -64,10 +60,10 @@ impl Flags {
     Self::CONTEXT_MENU
   }
 
-  /// Keep `DEV_TOOLS` and `RELOAD` shortcuts enabled when in debug mode.
+  /// Keep `CONTEXT_MENU`, `DEV_TOOLS`, and `RELOAD` shortcuts enabled when in debug mode.
   pub fn debug() -> Self {
     if cfg!(debug_assertions) {
-      Self::all().difference(Self::DEV_TOOLS | Self::RELOAD)
+      Self::all().difference(Self::CONTEXT_MENU | Self::DEV_TOOLS | Self::RELOAD)
     } else {
       Self::all()
     }
@@ -80,16 +76,17 @@ impl Default for Flags {
   }
 }
 
-pub struct Builder<R: Runtime> {
+pub struct Builder {
   flags: Flags,
-  shortcuts: Vec<Box<dyn Shortcut<R>>>,
+  shortcuts: Vec<Box<dyn Shortcut>>,
   check_origin: Option<String>,
 
   #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
-  platform: WindowsOptions,
+  platform: PlatformOptions,
 }
 
-impl<R: Runtime> Default for Builder<R> {
+#[allow(clippy::derivable_impls)]
+impl Default for Builder {
   fn default() -> Self {
     Self {
       flags: Flags::default(),
@@ -97,12 +94,13 @@ impl<R: Runtime> Default for Builder<R> {
       check_origin: None,
 
       #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
-      platform: WindowsOptions::default(),
+      platform: PlatformOptions::default(),
     }
   }
 }
 
-impl<R: Runtime> Builder<R> {
+impl Builder {
+  /// Create a new builder with default values.
   pub fn new() -> Self {
     Self::default()
   }
@@ -139,7 +137,7 @@ impl<R: Runtime> Builder<R> {
   #[must_use]
   pub fn shortcut<S>(mut self, shortcut: S) -> Self
   where
-    S: Shortcut<R> + 'static,
+    S: Shortcut + 'static,
   {
     self.shortcuts.push(Box::new(shortcut));
     self
@@ -155,22 +153,69 @@ impl<R: Runtime> Builder<R> {
   /// Windows-specific options.
   #[must_use]
   #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
-  #[cfg_attr(docsrs, doc(cfg(feature = "unstable-windows")))]
-  pub fn platform(mut self, options: WindowsOptions) -> Self {
+  pub fn platform(mut self, options: PlatformOptions) -> Self {
     self.platform = options;
     self
   }
 
   /// Build the plugin.
-  pub fn build(mut self) -> TauriPlugin<R> {
+  pub fn build<R: Runtime>(mut self) -> TauriPlugin<R> {
+    let script = self.create_script();
+    self
+      .plugin_builder()
+      .js_init_script(script.into())
+      .build()
+  }
+
+  /// Build the plugin, but do not inject the script into the webviews.
+  /// The script should then be manually set as the initialization script when creating the window.
+  ///
+  /// # Examples
+  /// ```
+  /// use tauri::{AppHandle, WebviewUrl, WebviewWindowBuilder};
+  /// use tauri_plugin_prevent_default::PreventDefault;
+  ///
+  /// fn create_window(app: &AppHandle) {
+  ///   let url = WebviewUrl::App("index.html".into());
+  ///   WebviewWindowBuilder::new(app, "main", url)
+  ///     .initialization_script(app.script())
+  ///     .build()
+  ///     .unwrap();
+  /// }
+  /// ```
+  pub fn build_for_manual_injection<R: Runtime>(mut self) -> TauriPlugin<R> {
+    let script = self.create_script();
+    self
+      .plugin_builder()
+      .setup(move |app, _| {
+        app.manage(script);
+        Ok(())
+      })
+      .build()
+  }
+
+  fn plugin_builder<R: Runtime>(self) -> PluginBuilder<R> {
+    let mut builder = PluginBuilder::new("prevent-default");
+
+    #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+    {
+      let options = self.platform;
+      builder = builder.on_webview_ready(move |webview| {
+        platform::windows::on_webview_ready(&webview, &options);
+      });
+    }
+
+    builder
+  }
+
+  fn create_script(&mut self) -> Script {
     self.add_keyboard_shortcuts();
     self.add_pointer_shortcuts();
 
     let mut script = String::new();
-    let mut state = PluginState::<R>::new();
 
     for shortcut in &mut self.shortcuts {
-      match shortcut.downcast_ref() {
+      match shortcut.kind() {
         ShortcutKind::Keyboard(it) => {
           let modifiers = it.modifiers();
           let mut options = String::with_capacity(modifiers.len() * 12);
@@ -185,57 +230,19 @@ impl<R: Runtime> Builder<R> {
           script.push_str(&format!("onPointer('{}');", it.event()));
         }
       }
-
-      let listeners = shortcut.take_listeners();
-      if !listeners.is_empty() {
-        let shortcut = shortcut.to_string();
-        if let Some(it) = state.listeners.get_mut(&shortcut) {
-          it.extend(listeners);
-        } else {
-          state
-            .listeners
-            .insert(shortcut, HashSet::from_iter(listeners));
-        }
-      }
     }
 
     let origin = self
       .check_origin
+      .as_deref()
       .map(|it| format!("const ORIGIN='{it}';"))
       .unwrap_or_else(|| "const ORIGIN=null;".to_owned());
 
-    let mut script = include_str!("../scripts/script.js")
+    include_str!("../scripts/script.js")
       .trim()
       .replace("/*ORIGIN*/", &origin)
-      .replace("/*SCRIPT*/", &script);
-
-    if state.listeners.is_empty() {
-      script = script.replace("/*EMIT*/", "const EMIT=false;");
-    } else {
-      script = script.replace("/*EMIT*/", "const EMIT=true;");
-    }
-
-    let mut builder = PluginBuilder::new("prevent-default");
-    if !state.listeners.is_empty() {
-      builder = builder
-        .invoke_handler(tauri::generate_handler![
-          command::keyboard,
-          command::pointer
-        ])
-        .setup(|app, _| {
-          app.manage(state);
-          Ok(())
-        });
-    }
-
-    #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
-    {
-      builder = builder.on_webview_ready(move |webview| {
-        platform::windows::on_webview_ready(&webview, &self.platform);
-      });
-    }
-
-    builder.js_init_script(script).build()
+      .replace("/*SCRIPT*/", &script)
+      .into()
   }
 
   fn add_keyboard_shortcuts(&mut self) {
@@ -305,6 +312,61 @@ impl<R: Runtime> Builder<R> {
       let shortcut = PointerShortcut::new(PointerEvent::ContextMenu);
       self.shortcuts.push(Box::new(shortcut));
     }
+  }
+}
+
+/// Provide access to the script.
+pub trait PreventDefault<R: Runtime> {
+  /// Retrieve the script.
+  ///
+  /// # Panics
+  ///
+  /// Panics if the plugin was not [built for manual injection](Builder::build_for_manual_injection).
+  fn script(&self) -> Script;
+
+  /// Attempt to retrieve the script.
+  ///
+  /// Returns `Some` if the plugin was [built for manual injection](Builder::build_for_manual_injection).
+  /// Otherwise returns `None`.
+  fn try_script(&self) -> Option<Script>;
+}
+
+impl<R, T> PreventDefault<R> for T
+where
+  R: Runtime,
+  T: Manager<R>,
+{
+  fn script(&self) -> Script {
+    (*self.app_handle().state::<Script>()).clone()
+  }
+
+  fn try_script(&self) -> Option<Script> {
+    self
+      .app_handle()
+      .try_state::<Script>()
+      .as_deref()
+      .cloned()
+  }
+}
+
+/// Script to be injected into the webview.
+pub struct Script(Arc<str>);
+
+impl Clone for Script {
+  fn clone(&self) -> Self {
+    Self(Arc::clone(&self.0))
+  }
+}
+
+impl From<String> for Script {
+  fn from(value: String) -> Self {
+    Script(Arc::from(value))
+  }
+}
+
+impl From<Script> for String {
+  fn from(value: Script) -> Self {
+    String::from(value.0.as_ref())
   }
 }
 

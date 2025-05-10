@@ -1,58 +1,35 @@
 mod keyboard;
 mod pointer;
 
-use crate::listener::EventListener;
-use std::{fmt, mem};
+use std::fmt;
 use strum::{Display, EnumIs};
-use tauri::Runtime;
 
 pub use keyboard::{KeyboardShortcut, KeyboardShortcutBuilder};
 pub use pointer::{PointerEvent, PointerShortcut, PointerShortcutBuilder};
 
-pub trait Shortcut<R: Runtime>: fmt::Display {
-  #[doc(hidden)]
-  fn downcast_ref(&self) -> ShortcutKind<R>;
-  #[doc(hidden)]
-  fn add_listeners(&mut self, listeners: &[EventListener<R>]);
-  #[doc(hidden)]
-  fn take_listeners(&mut self) -> Vec<EventListener<R>>;
+pub trait Shortcut: fmt::Display {
+  fn kind(&self) -> ShortcutKind;
 }
 
-impl<R: Runtime> Shortcut<R> for KeyboardShortcut<R> {
-  fn downcast_ref(&self) -> ShortcutKind<R> {
+impl Shortcut for KeyboardShortcut {
+  fn kind(&self) -> ShortcutKind {
     ShortcutKind::Keyboard(self)
   }
-
-  fn add_listeners(&mut self, listeners: &[EventListener<R>]) {
-    self.listeners.extend_from_slice(listeners);
-  }
-
-  fn take_listeners(&mut self) -> Vec<EventListener<R>> {
-    mem::take(&mut self.listeners)
-  }
 }
 
-impl<R: Runtime> Shortcut<R> for PointerShortcut<R> {
-  fn downcast_ref(&self) -> ShortcutKind<R> {
+impl Shortcut for PointerShortcut {
+  fn kind(&self) -> ShortcutKind {
     ShortcutKind::Pointer(self)
-  }
-
-  fn add_listeners(&mut self, listeners: &[EventListener<R>]) {
-    self.listeners.extend_from_slice(listeners);
-  }
-
-  fn take_listeners(&mut self) -> Vec<EventListener<R>> {
-    mem::take(&mut self.listeners)
   }
 }
 
 #[derive(Debug)]
-pub enum ShortcutKind<'a, R: Runtime> {
-  Keyboard(&'a KeyboardShortcut<R>),
-  Pointer(&'a PointerShortcut<R>),
+pub enum ShortcutKind<'a> {
+  Keyboard(&'a KeyboardShortcut),
+  Pointer(&'a PointerShortcut),
 }
 
-impl<R: Runtime> ShortcutKind<'_, R> {
+impl ShortcutKind<'_> {
   /// Returns `true` if the shortcut is a keyboard shortcut.
   pub fn is_keyboard(&self) -> bool {
     matches!(self, ShortcutKind::Keyboard(_))
@@ -101,40 +78,18 @@ impl Ord for ModifierKey {
 mod test {
   use super::ModifierKey::{AltKey, CtrlKey, MetaKey, ShiftKey};
   use super::*;
-  use tauri::Wry;
-
-  #[test]
-  fn take_listeners() {
-    // Keyboard
-    let mut keyboard = KeyboardShortcut::<Wry>::new("F12");
-    let listener = EventListener::new(|_| {});
-    keyboard.listeners.push(listener.clone());
-
-    let listeners = keyboard.take_listeners();
-    assert_eq!(listeners, vec![listener]);
-    assert!(keyboard.listeners.is_empty());
-
-    // Pointer
-    let mut pointer = PointerShortcut::<Wry>::new(PointerEvent::ContextMenu);
-    let listener = EventListener::new(|_| {});
-    pointer.listeners.push(listener.clone());
-
-    let listeners = pointer.take_listeners();
-    assert_eq!(listeners, vec![listener]);
-    assert!(pointer.listeners.is_empty());
-  }
 
   #[test]
   fn shortcut_kind() {
     // Keyboard
     let keyboard = KeyboardShortcut::new("F12");
-    let keyboard = Box::new(keyboard) as Box<dyn Shortcut<Wry>>;
-    assert!(keyboard.downcast_ref().is_keyboard());
+    let keyboard = Box::new(keyboard) as Box<dyn Shortcut>;
+    assert!(keyboard.kind().is_keyboard());
 
     // Pointer
     let pointer = PointerShortcut::new(PointerEvent::ContextMenu);
-    let pointer = Box::new(pointer) as Box<dyn Shortcut<Wry>>;
-    assert!(pointer.downcast_ref().is_pointer());
+    let pointer = Box::new(pointer) as Box<dyn Shortcut>;
+    assert!(pointer.kind().is_pointer());
   }
 
   #[test]
