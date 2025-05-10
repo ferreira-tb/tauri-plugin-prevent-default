@@ -183,7 +183,7 @@ impl Builder {
   ///     .unwrap();
   /// }
   /// ```
-  pub fn build_for_manual_injection<R: Runtime>(mut self) -> TauriPlugin<R> {
+  pub fn build_with_manual_injection<R: Runtime>(mut self) -> TauriPlugin<R> {
     let script = self.create_script();
     self
       .plugin_builder()
@@ -323,12 +323,12 @@ pub trait PreventDefault<R: Runtime> {
   ///
   /// # Panics
   ///
-  /// Panics if the plugin was not [built for manual injection](Builder::build_for_manual_injection).
+  /// Panics if the plugin was not [built with manual injection](Builder::build_with_manual_injection).
   fn script(&self) -> Script;
 
   /// Attempt to retrieve the script.
   ///
-  /// Returns `Some` if the plugin was [built for manual injection](Builder::build_for_manual_injection).
+  /// Returns `Some` if the plugin was [built with manual injection](Builder::build_with_manual_injection).
   /// Otherwise returns `None`.
   fn try_script(&self) -> Option<Script>;
 }
@@ -377,12 +377,32 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
   Builder::default().build()
 }
 
+/// Initialize the plugin with default values while also allowing for manual injection.
+pub fn init_with_manual_injection<R: Runtime>() -> TauriPlugin<R> {
+  Builder::default().build_with_manual_injection()
+}
+
 /// Initialize the plugin with given flags.
 pub fn with_flags<R: Runtime>(flags: Flags) -> TauriPlugin<R> {
   Builder::new().with_flags(flags).build()
 }
 
+/// Initialize the plugin with given flags while also allowing for manual injection.
+pub fn with_flags_and_manual_injection<R: Runtime>(flags: Flags) -> TauriPlugin<R> {
+  Builder::new()
+    .with_flags(flags)
+    .build_with_manual_injection()
+}
+
 /// Initialize the plugin with the default [debug flags](Flags::debug).
 pub fn debug<R: Runtime>() -> TauriPlugin<R> {
   Builder::new().with_flags(Flags::debug()).build()
+}
+
+/// Initialize the plugin with the default [debug flags](Flags::debug)
+/// while also allowing for manual injection..
+pub fn debug_with_manual_injection<R: Runtime>() -> TauriPlugin<R> {
+  Builder::new()
+    .with_flags(Flags::debug())
+    .build_with_manual_injection()
 }
