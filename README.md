@@ -8,19 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "1.3"
-```
-
-If using custom listeners, you must also enable the required permissions:
-
-`src-tauri/capabilities/prevent-default.json`
-
-```json
-{
-  "identifier": "prevent-default",
-  "windows": ["*"],
-  "permissions": ["prevent-default:default"]
-}
+tauri-plugin-prevent-default = "2.0"
 ```
 
 ## Usage
@@ -110,7 +98,18 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 }
 ```
 
+If you want to keep only [`CONTEXT_MENU`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.CONTEXT_MENU), [`DEV_TOOLS`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.DEV_TOOLS), and [`RELOAD`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.RELOAD) enabled in dev mode, you can build the plugin with [`tauri_plugin_prevent_default::debug`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/fn.debug.html) instead.
+
+```rust
+tauri::Builder::default()
+  .plugin(tauri_plugin_prevent_default::debug())
+  .run(tauri::generate_context!())
+  .expect("error while running tauri application");
+```
+
 ## Platform-specific options
+
+Please read our [versioning policy](#versioning-and-experimental-features) before using any of these options.
 
 ### Windows
 
@@ -118,14 +117,14 @@ The `unstable-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "1.3", features = ["unstable-windows"] }
+tauri-plugin-prevent-default = { version = "2.0", features = ["unstable-windows"] }
 ```
 
 ```rust
-use tauri_plugin_prevent_default::WindowsOptions;
+use tauri_plugin_prevent_default::PlatformOptions;
 
 tauri_plugin_prevent_default::Builder::new()
-  .platform(WindowsOptions {
+  .platform(PlatformOptions {
     // Whether general form information should be saved and autofilled.
     general_autofill: true,
     // Whether password information should be autosaved.

@@ -1,27 +1,23 @@
 use super::ModifierKey;
 use crate::display;
-use crate::listener::EventListener;
 use std::fmt;
-use tauri::{Runtime, Window};
 
 #[derive(Debug)]
-pub struct KeyboardShortcut<R: Runtime> {
+pub struct KeyboardShortcut {
   key: String,
   modifiers: Vec<ModifierKey>,
-  pub(super) listeners: Vec<EventListener<R>>,
 }
 
-impl<R: Runtime> KeyboardShortcut<R> {
+impl KeyboardShortcut {
   pub fn new(key: impl AsRef<str>) -> Self {
     Self {
       key: key.as_ref().to_owned(),
       modifiers: Vec::new(),
-      listeners: Vec::new(),
     }
   }
 
   /// Initialize a new keyboard shortcut builder with the specified key.
-  pub fn builder(key: impl AsRef<str>) -> KeyboardShortcutBuilder<R> {
+  pub fn builder(key: impl AsRef<str>) -> KeyboardShortcutBuilder {
     KeyboardShortcutBuilder::new(key)
   }
 
@@ -90,14 +86,6 @@ impl<R: Runtime> KeyboardShortcut<R> {
       .build()
   }
 
-  /// Create a new keyboard shortcut with the specified key and a listener.
-  pub fn with_listener<F>(key: impl AsRef<str>, listener: F) -> Self
-  where
-    F: Fn(&Window<R>) + Send + Sync + 'static,
-  {
-    Self::builder(key).on(listener).build()
-  }
-
   /// The key of the shortcut.
   pub fn key(&self) -> &str {
     &self.key
@@ -109,26 +97,24 @@ impl<R: Runtime> KeyboardShortcut<R> {
   }
 }
 
-impl<R: Runtime> fmt::Display for KeyboardShortcut<R> {
+impl fmt::Display for KeyboardShortcut {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{}", display::keyboard(&self.key, &self.modifiers))
   }
 }
 
 #[derive(Debug)]
-pub struct KeyboardShortcutBuilder<R: Runtime> {
+pub struct KeyboardShortcutBuilder {
   key: String,
   modifiers: Vec<ModifierKey>,
-  listeners: Vec<EventListener<R>>,
 }
 
-impl<R: Runtime> KeyboardShortcutBuilder<R> {
+impl KeyboardShortcutBuilder {
   /// Create a new keyboard shortcut builder with the specified key.
   pub fn new(key: impl AsRef<str>) -> Self {
     Self {
       key: key.as_ref().to_owned(),
       modifiers: Vec::new(),
-      listeners: Vec::new(),
     }
   }
 
@@ -174,23 +160,11 @@ impl<R: Runtime> KeyboardShortcutBuilder<R> {
     self
   }
 
-  /// Set a listener for the shortcut.
-  #[must_use]
-  pub fn on<F>(mut self, listener: F) -> Self
-  where
-    F: Fn(&Window<R>) + Send + Sync + 'static,
-  {
-    let listener = EventListener::new(listener);
-    self.listeners.push(listener);
-    self
-  }
-
   /// Build the keyboard shortcut.
-  pub fn build(self) -> KeyboardShortcut<R> {
+  pub fn build(self) -> KeyboardShortcut {
     KeyboardShortcut {
       key: self.key,
       modifiers: self.modifiers,
-      listeners: self.listeners,
     }
   }
 }

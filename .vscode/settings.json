@@ -1,7 +1,5 @@
 {
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
-  },
-  "rust-analyzer.imports.granularity.enforce": true,
-  "rust-analyzer.showUnlinkedFileNotification": false
+  }
 }

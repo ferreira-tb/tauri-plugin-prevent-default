@@ -2,7 +2,7 @@ use tauri::{Runtime, Webview};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
 use windows::core::Interface;
 
-pub struct WindowsOptions {
+pub struct PlatformOptions {
   /// Determine whether general form information will be saved and autofilled.
   ///
   /// <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2settings.isgeneralautofillenabled>
@@ -14,7 +14,7 @@ pub struct WindowsOptions {
   pub password_autosave: bool,
 }
 
-impl Default for WindowsOptions {
+impl Default for PlatformOptions {
   fn default() -> Self {
     Self {
       general_autofill: true,
@@ -23,7 +23,7 @@ impl Default for WindowsOptions {
   }
 }
 
-pub(crate) fn on_webview_ready<R>(webview: &Webview<R>, options: &WindowsOptions)
+pub(crate) fn on_webview_ready<R>(webview: &Webview<R>, options: &PlatformOptions)
 where
   R: Runtime,
 {
