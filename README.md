@@ -98,6 +98,10 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 }
 ```
 
+> [!TIP]
+> If you want to keep only `CONTEXT_MENU`, `DEV_TOOLS`, and `RELOAD` enabled in dev mode,
+> you can build the plugin with [`tauri_plugin_prevent_default::debug`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/fn.debug.html) instead.
+
 ## Platform-specific options
 
 > [!WARNING]
