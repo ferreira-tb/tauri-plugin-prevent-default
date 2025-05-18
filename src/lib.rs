@@ -1,20 +1,22 @@
+#![forbid(unsafe_code)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![doc = include_str!("../README.md")]
 #![allow(clippy::format_push_string)]
 
 mod display;
 mod error;
+mod script;
 mod shortcut;
 
 #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
 mod platform;
 
 use bitflags::bitflags;
-use std::sync::Arc;
 use tauri::plugin::{Builder as PluginBuilder, TauriPlugin};
 use tauri::{Manager, Runtime};
 
 pub use error::Error;
+pub use script::Script;
 pub use shortcut::{
   KeyboardShortcut, KeyboardShortcutBuilder, ModifierKey, PointerEvent, PointerShortcut,
   PointerShortcutBuilder, Shortcut, ShortcutKind,
@@ -348,27 +350,6 @@ where
       .try_state::<Script>()
       .as_deref()
       .cloned()
-  }
-}
-
-/// Script to be injected into the webview.
-pub struct Script(Arc<str>);
-
-impl Clone for Script {
-  fn clone(&self) -> Self {
-    Self(Arc::clone(&self.0))
-  }
-}
-
-impl From<String> for Script {
-  fn from(value: String) -> Self {
-    Script(Arc::from(value))
-  }
-}
-
-impl From<Script> for String {
-  fn from(value: Script) -> Self {
-    String::from(value.0.as_ref())
   }
 }
 
