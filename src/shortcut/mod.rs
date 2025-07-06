@@ -8,17 +8,17 @@ pub use keyboard::{KeyboardShortcut, KeyboardShortcutBuilder};
 pub use pointer::{PointerEvent, PointerShortcut, PointerShortcutBuilder};
 
 pub trait Shortcut: fmt::Display {
-  fn kind(&self) -> ShortcutKind;
+  fn kind(&self) -> ShortcutKind<'_>;
 }
 
 impl Shortcut for KeyboardShortcut {
-  fn kind(&self) -> ShortcutKind {
+  fn kind(&self) -> ShortcutKind<'_> {
     ShortcutKind::Keyboard(self)
   }
 }
 
 impl Shortcut for PointerShortcut {
-  fn kind(&self) -> ShortcutKind {
+  fn kind(&self) -> ShortcutKind<'_> {
     ShortcutKind::Pointer(self)
   }
 }
