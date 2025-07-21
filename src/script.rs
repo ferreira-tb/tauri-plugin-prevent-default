@@ -7,18 +7,16 @@ use std::sync::Arc;
 pub struct Script(Arc<str>);
 
 impl Script {
+  #[must_use]
   pub fn new(script: impl AsRef<str>) -> Self {
     Self(Arc::from(script.as_ref()))
   }
 
   #[must_use]
   pub fn join(&self, script: impl AsRef<str>) -> Self {
-    let script = script.as_ref();
-    let capacity = self.0.len().saturating_add(script.len());
-    let mut buf = String::with_capacity(capacity);
-    buf.push_str(&self.0);
+    let mut buf = String::from(self.0.as_ref());
     buf.push('\n');
-    buf.push_str(script);
+    buf.push_str(script.as_ref());
     Self::from(buf)
   }
 }
