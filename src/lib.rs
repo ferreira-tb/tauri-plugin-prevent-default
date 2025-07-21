@@ -164,7 +164,7 @@ impl Builder {
     let script = self.create_script();
     self
       .plugin_builder()
-      .js_init_script(script.into())
+      .js_init_script(script)
       .build()
   }
 
