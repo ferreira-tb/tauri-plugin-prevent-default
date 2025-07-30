@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "2.1"
+tauri-plugin-prevent-default = "3"
 ```
 
 ## Usage
@@ -113,11 +113,11 @@ Please read our [versioning policy](#versioning-and-experimental-features) befor
 
 ### Windows
 
-The `unstable-windows` feature must be enabled.
+The `platform-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "2.1", features = ["unstable-windows"] }
+tauri-plugin-prevent-default = { version = "3", features = ["platform-windows"] }
 ```
 
 ```rust

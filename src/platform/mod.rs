@@ -1,2 +1,2 @@
-#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+#[cfg(all(target_os = "windows", feature = "platform-windows"))]
 pub mod windows;
