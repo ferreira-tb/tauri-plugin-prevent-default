@@ -1,7 +1,7 @@
 [package]
 name = "tauri-plugin-prevent-default"
 description = "Disable default browser shortcuts"
-version = "2.1.3"
+version = "2.1.4"
 homepage = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 documentation = "https://docs.rs/tauri-plugin-prevent-default"
