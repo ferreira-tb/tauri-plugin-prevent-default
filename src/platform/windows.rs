@@ -2,6 +2,7 @@ use tauri::{Runtime, Webview};
 use webview2_com::Microsoft::Web::WebView2::Win32::ICoreWebView2Settings4;
 use windows::core::Interface;
 
+#[non_exhaustive]
 pub struct PlatformOptions {
   /// Determine whether general form information will be saved and autofilled.
   ///

@@ -7,7 +7,7 @@ mod error;
 mod script;
 mod shortcut;
 
-#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+#[cfg(all(target_os = "windows", feature = "platform-windows"))]
 mod platform;
 
 use bitflags::bitflags;
@@ -21,7 +21,7 @@ pub use shortcut::{
   PointerShortcutBuilder, Shortcut, ShortcutKind,
 };
 
-#[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+#[cfg(all(target_os = "windows", feature = "platform-windows"))]
 pub use platform::windows::PlatformOptions;
 
 bitflags! {
@@ -82,7 +82,7 @@ pub struct Builder {
   shortcuts: Vec<Box<dyn Shortcut>>,
   check_origin: Option<String>,
 
-  #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+  #[cfg(all(target_os = "windows", feature = "platform-windows"))]
   platform: PlatformOptions,
 }
 
@@ -94,7 +94,7 @@ impl Default for Builder {
       shortcuts: Vec::new(),
       check_origin: None,
 
-      #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+      #[cfg(all(target_os = "windows", feature = "platform-windows"))]
       platform: PlatformOptions::default(),
     }
   }
@@ -153,7 +153,7 @@ impl Builder {
 
   /// Windows-specific options.
   #[must_use]
-  #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+  #[cfg(all(target_os = "windows", feature = "platform-windows"))]
   pub fn platform(mut self, options: PlatformOptions) -> Self {
     self.platform = options;
     self
@@ -200,7 +200,7 @@ impl Builder {
     #[allow(unused_mut)]
     let mut builder = PluginBuilder::new("prevent-default");
 
-    #[cfg(all(target_os = "windows", feature = "unstable-windows"))]
+    #[cfg(all(target_os = "windows", feature = "platform-windows"))]
     {
       let options = self.platform;
       builder = builder.on_webview_ready(move |webview| {
