@@ -39,6 +39,17 @@ tauri::Builder::default()
   .expect("error while running tauri application");
 ```
 
+If you want to keep only [`CONTEXT_MENU`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.CONTEXT_MENU), [`DEV_TOOLS`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.DEV_TOOLS), and [`RELOAD`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.RELOAD) enabled in dev mode, you can build the plugin with [`tauri_plugin_prevent_default::debug`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/fn.debug.html) instead.
+
+```rust
+tauri::Builder::default()
+  .plugin(tauri_plugin_prevent_default::debug())
+  .run(tauri::generate_context!())
+  .expect("error while running tauri application");
+```
+
+## Examples
+
 - Disable all but a few:
 
 ```rust
@@ -96,15 +107,6 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
   tauri_plugin_prevent_default::init()
 }
-```
-
-If you want to keep only [`CONTEXT_MENU`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.CONTEXT_MENU), [`DEV_TOOLS`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.DEV_TOOLS), and [`RELOAD`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/struct.Flags.html#associatedconstant.RELOAD) enabled in dev mode, you can build the plugin with [`tauri_plugin_prevent_default::debug`](https://docs.rs/tauri-plugin-prevent-default/latest/tauri_plugin_prevent_default/fn.debug.html) instead.
-
-```rust
-tauri::Builder::default()
-  .plugin(tauri_plugin_prevent_default::debug())
-  .run(tauri::generate_context!())
-  .expect("error while running tauri application");
 ```
 
 ## Platform-specific options
