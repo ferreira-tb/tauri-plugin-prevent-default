@@ -109,8 +109,6 @@ fn prevent_default() -> tauri::plugin::TauriPlugin<tauri::Wry> {
 }
 ```
 
-
-
 ## Platform-specific options
 
 Please read our [versioning policy](#versioning-and-experimental-features) before using any of these options.
