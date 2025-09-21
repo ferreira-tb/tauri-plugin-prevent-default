@@ -2,21 +2,21 @@ use crate::shortcut::{ModifierKey, PointerEvent};
 use itertools::Itertools;
 
 pub(crate) fn keyboard(key: &str, modifiers: &[ModifierKey]) -> String {
-  let mut string = String::from("keyboard:");
-  let capacity = key.len() + modifiers.len() * 5;
-  string.reserve(capacity);
+  let mut buf = String::from("keyboard:");
+  let mod_len = modifiers.len().saturating_mul(5);
+  buf.reserve(key.len().saturating_add(mod_len));
 
   for modifier in modifiers.iter().unique().sorted() {
     match modifier {
-      ModifierKey::CtrlKey => string.push_str("ctrl+"),
-      ModifierKey::ShiftKey => string.push_str("shift+"),
-      ModifierKey::AltKey => string.push_str("alt+"),
-      ModifierKey::MetaKey => string.push_str("meta+"),
+      ModifierKey::CtrlKey => buf.push_str("ctrl+"),
+      ModifierKey::ShiftKey => buf.push_str("shift+"),
+      ModifierKey::AltKey => buf.push_str("alt+"),
+      ModifierKey::MetaKey => buf.push_str("meta+"),
     }
   }
 
-  string.push_str(&key.to_lowercase());
-  string
+  buf.push_str(&key.to_lowercase());
+  buf
 }
 
 pub(crate) fn pointer(event: PointerEvent) -> String {
