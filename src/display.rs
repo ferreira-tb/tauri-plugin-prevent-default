@@ -3,8 +3,8 @@ use itertools::Itertools;
 
 pub(crate) fn keyboard(key: &str, modifiers: &[ModifierKey]) -> String {
   let mut string = String::from("keyboard:");
-  let capacity = key.len() + modifiers.len() * 5;
-  string.reserve(capacity);
+  let mod_len = modifiers.len().saturating_mul(5);
+  string.reserve(key.len().saturating_add(mod_len));
 
   for modifier in modifiers.iter().unique().sorted() {
     match modifier {
