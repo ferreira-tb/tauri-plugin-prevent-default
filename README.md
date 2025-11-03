@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "3"
+tauri-plugin-prevent-default = "4"
 ```
 
 ## Usage
@@ -119,19 +119,19 @@ The `platform-windows` feature must be enabled.
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "3", features = ["platform-windows"] }
+tauri-plugin-prevent-default = { version = "4", features = ["platform-windows"] }
 ```
 
 ```rust
 use tauri_plugin_prevent_default::PlatformOptions;
 
 tauri_plugin_prevent_default::Builder::new()
-  .platform(PlatformOptions {
-    // Whether general form information should be saved and autofilled.
-    general_autofill: true,
-    // Whether password information should be autosaved.
-    password_autosave: false,
-  })
+  .platform(PlatformOptions::new()
+      // Whether general form information should be saved and autofilled.
+      .general_autofill(true)
+      // Whether password information should be autosaved.
+      .password_autosave(true)
+    )
   .build()
 ```
 
