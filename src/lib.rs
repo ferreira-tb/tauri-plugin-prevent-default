@@ -204,7 +204,7 @@ impl Builder {
     {
       let options = self.platform;
       builder = builder.on_webview_ready(move |webview| {
-        platform::windows::on_webview_ready(&webview, &options);
+        platform::windows::on_webview_ready(&webview, options.clone());
       });
     }
 
@@ -241,7 +241,7 @@ impl Builder {
       .map(|it| format!("const ORIGIN='{it}';"))
       .unwrap_or_else(|| "const ORIGIN=null;".to_owned());
 
-    include_str!("../scripts/script.js")
+    include_str!("../assets/script.js")
       .trim()
       .replace("/*ORIGIN*/", &origin)
       .replace("/*SCRIPT*/", &script)

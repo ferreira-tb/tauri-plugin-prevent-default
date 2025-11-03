@@ -126,12 +126,12 @@ tauri-plugin-prevent-default = { version = "3", features = ["platform-windows"] 
 use tauri_plugin_prevent_default::PlatformOptions;
 
 tauri_plugin_prevent_default::Builder::new()
-  .platform(PlatformOptions {
-    // Whether general form information should be saved and autofilled.
-    general_autofill: true,
-    // Whether password information should be autosaved.
-    password_autosave: false,
-  })
+  .platform(PlatformOptions::new()
+      // Whether general form information should be saved and autofilled.
+      .general_autofill(true)
+      // Whether password information should be autosaved.
+      .password_autosave(true)
+    )
   .build()
 ```
 
