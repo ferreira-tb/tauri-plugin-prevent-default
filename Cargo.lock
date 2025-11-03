@@ -3331,7 +3331,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-prevent-default"
-version = "4.0.1"
+version = "4.0.2"
 dependencies = [
  "bitflags 2.10.0",
  "itertools",
