@@ -130,7 +130,7 @@ tauri_plugin_prevent_default::Builder::new()
       // Whether general form information should be saved and autofilled.
       .general_autofill(true)
       // Whether password information should be autosaved.
-      .password_autosave(true)
+      .password_autosave(false)
     )
   .build()
 ```
