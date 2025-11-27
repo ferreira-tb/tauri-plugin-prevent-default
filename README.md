@@ -48,6 +48,9 @@ tauri::Builder::default()
   .expect("error while running tauri application");
 ```
 
+> [!TIP]
+> For platform-specific options, see its [corresponding section](#platform-specific-options).
+
 ## Examples
 
 - Disable all but a few:
@@ -115,7 +118,7 @@ Please read our [versioning policy](#versioning-and-experimental-features) befor
 
 ### Windows
 
-The `platform-windows` feature must be enabled.
+The `platform-windows` feature must be enabled. Check the [documentation](https://docs.rs/tauri-plugin-prevent-default/latest/x86_64-pc-windows-msvc/tauri_plugin_prevent_default/struct.PlatformOptions.html) for more details.
 
 ```toml
 [dependencies]
@@ -131,13 +134,19 @@ tauri_plugin_prevent_default::Builder::new()
       .general_autofill(true)
       // Whether password information should be autosaved.
       .password_autosave(false)
+      // Whether browser-specific accelerator keys are enabled.
+      .browser_accelerator_keys(false)
+      // Whether the default context menus are shown in the webview.
+      .default_context_menus(false)
+      // Whether the webview renders the default JavaScript dialog box.
+      .default_script_dialogs(false)
     )
   .build()
 ```
 
 ## Versioning and Experimental Features
 
-This plugin adheres to [SemVer](https://semver.org/). However, [features](https://doc.rust-lang.org/cargo/reference/features.html) marked as `unstable` are experimental and may introduce breaking changes between minor versions.
+This plugin follows [SemVer](https://semver.org/), but [features](https://doc.rust-lang.org/cargo/reference/features.html) marked as `unstable` are experimental and may introduce breaking changes between minor versions.
 
 ## Supported Tauri Version
 
