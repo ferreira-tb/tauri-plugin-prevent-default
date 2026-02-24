@@ -37,7 +37,7 @@ priority = -1
 [dependencies]
 bitflags = "2.10"
 itertools = "0.14"
-tauri = "2"
+tauri = { version = "2", default-features = false }
 thiserror = "2"
 
 [dependencies.serde]
