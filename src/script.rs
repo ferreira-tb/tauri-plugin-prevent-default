@@ -3,7 +3,7 @@ use std::ops::{Add, AddAssign};
 use std::sync::Arc;
 
 /// Script to be injected into the webview.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Script(Arc<str>);
 
 impl Script {
@@ -24,12 +24,6 @@ impl Script {
 impl AsRef<str> for Script {
   fn as_ref(&self) -> &str {
     &self.0
-  }
-}
-
-impl Clone for Script {
-  fn clone(&self) -> Self {
-    Self(Arc::clone(&self.0))
   }
 }
 

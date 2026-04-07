@@ -325,13 +325,13 @@ pub trait PreventDefault<R: Runtime> {
   /// # Panics
   ///
   /// Panics if the plugin was not [built with manual injection](Builder::build_with_manual_injection).
-  fn script(&self) -> Script;
+  fn prevent_default_script(&self) -> Script;
 
   /// Attempt to retrieve the script.
   ///
   /// Returns `Some` if the plugin was [built with manual injection](Builder::build_with_manual_injection).
   /// Otherwise returns `None`.
-  fn try_script(&self) -> Option<Script>;
+  fn try_prevent_default_script(&self) -> Option<Script>;
 }
 
 impl<R, T> PreventDefault<R> for T
@@ -339,11 +339,11 @@ where
   R: Runtime,
   T: Manager<R>,
 {
-  fn script(&self) -> Script {
+  fn prevent_default_script(&self) -> Script {
     (*self.app_handle().state::<Script>()).clone()
   }
 
-  fn try_script(&self) -> Option<Script> {
+  fn try_prevent_default_script(&self) -> Option<Script> {
     self
       .app_handle()
       .try_state::<Script>()
