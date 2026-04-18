@@ -1,5 +1,5 @@
 use std::fmt;
-use std::ops::{Add, AddAssign};
+use std::ops::Deref;
 use std::sync::Arc;
 
 /// Script to be injected into the webview.
@@ -23,7 +23,21 @@ impl Script {
 
 impl AsRef<str> for Script {
   fn as_ref(&self) -> &str {
-    &self.0
+    self.0.as_ref()
+  }
+}
+
+impl Deref for Script {
+  type Target = str;
+
+  fn deref(&self) -> &Self::Target {
+    self.0.as_ref()
+  }
+}
+
+impl fmt::Display for Script {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.0)
   }
 }
 
@@ -36,67 +50,5 @@ impl From<&str> for Script {
 impl From<String> for Script {
   fn from(value: String) -> Self {
     Script(Arc::from(value))
-  }
-}
-
-impl From<&Script> for String {
-  fn from(value: &Script) -> Self {
-    String::from(value.0.as_ref())
-  }
-}
-
-impl From<Script> for String {
-  fn from(value: Script) -> Self {
-    <Self as From<&Script>>::from(&value)
-  }
-}
-
-impl From<&Script> for Vec<u8> {
-  fn from(value: &Script) -> Self {
-    value.0.as_bytes().to_vec()
-  }
-}
-
-impl From<Script> for Vec<u8> {
-  fn from(value: Script) -> Self {
-    <Self as From<&Script>>::from(&value)
-  }
-}
-
-impl From<&Script> for Vec<u16> {
-  fn from(value: &Script) -> Self {
-    value
-      .0
-      .as_bytes()
-      .iter()
-      .copied()
-      .map(u16::from)
-      .collect()
-  }
-}
-
-impl From<Script> for Vec<u16> {
-  fn from(value: Script) -> Self {
-    <Self as From<&Script>>::from(&value)
-  }
-}
-
-impl<T: AsRef<str>> Add<T> for Script {
-  type Output = Script;
-
-  fn add(self, rhs: T) -> Self::Output {
-    self.join(rhs)
-  }
-}
-
-impl<T: AsRef<str>> AddAssign<T> for Script {
-  fn add_assign(&mut self, other: T) {
-    *self = self.join(other);
-  }
-}
-
-impl fmt::Display for Script {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.0)
   }
 }
