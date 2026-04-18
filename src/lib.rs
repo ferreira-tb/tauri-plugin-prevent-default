@@ -147,7 +147,7 @@ impl Builder {
   /// Check location origin before disabling the shortcuts.
   #[must_use]
   pub fn check_origin(mut self, origin: impl AsRef<str>) -> Self {
-    let origin = origin.as_ref();
+    let origin = origin.as_ref().trim();
     if !origin.is_empty() {
       self.check_origin = Some(origin.to_owned());
     }
