@@ -3,7 +3,7 @@ use itertools::Itertools;
 
 pub(crate) fn keyboard(key: &str, modifiers: &[ModifierKey]) -> String {
   let mut buf = String::from("keyboard:");
-  let mod_len = modifiers.len().saturating_mul(5);
+  let mod_len = modifiers.len().saturating_mul(6);
   buf.reserve(key.len().saturating_add(mod_len));
 
   for modifier in modifiers.iter().unique().sorted() {

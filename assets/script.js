@@ -1,29 +1,44 @@
 /*ORIGIN*/
-if (window.location.origin.includes(ORIGIN ?? '')) {
-  function onKey(key, options = {}) {
-    const _key = key.toLowerCase();
-    options.altKey ??= false;
-    options.ctrlKey ??= false;
-    options.metaKey ??= false;
-    options.shiftKey ??= false;
-    window.addEventListener('keydown', (e) => {
-      if (
-        e.altKey !== options.altKey ||
-        e.ctrlKey !== options.ctrlKey ||
-        e.metaKey !== options.metaKey ||
-        e.shiftKey !== options.shiftKey
-      ) {
-        return;
-      }
-      if (e.key.toLowerCase() === _key) {
+if (ORIGIN === null || window.location.origin === ORIGIN) {
+  const shortcuts = new Map();
+  window.addEventListener('keydown', (e) => {
+    const eKey = e.key.toLowerCase();
+    const set = shortcuts.get(eKey);
+    if (set) {
+      const flags = toFlags({
+        altKey: e.altKey,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        shiftKey: e.shiftKey,
+      });
+      if (set.has(flags)) {
         e.preventDefault();
       }
-    });
+    }
+  });
+  function onKey(key, options = {}) {
+    const _key = key.toLowerCase();
+    let set = shortcuts.get(_key);
+    const flags = toFlags(options);
+    if (set) {
+      set.add(flags);
+    } else {
+      set = new Set([flags]);
+      shortcuts.set(_key, set);
+    }
   }
   function onPointer(name) {
     window.addEventListener(name, (e) => {
       e.preventDefault();
     });
+  }
+  function toFlags(options) {
+    let flags = 0;
+    if (options.altKey) flags |= 1;
+    if (options.ctrlKey) flags |= 2;
+    if (options.metaKey) flags |= 4;
+    if (options.shiftKey) flags |= 8;
+    return flags;
   }
   /*SCRIPT*/
 }
