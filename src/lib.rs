@@ -179,7 +179,7 @@ impl Builder {
   /// fn create_window(app: &AppHandle) {
   ///   let url = WebviewUrl::App("index.html".into());
   ///   WebviewWindowBuilder::new(app, "main", url)
-  ///     .initialization_script(app.script())
+  ///     .initialization_script(app.prevent_default_script())
   ///     .build()
   ///     .unwrap();
   /// }
