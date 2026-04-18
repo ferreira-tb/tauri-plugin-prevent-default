@@ -34,10 +34,10 @@ if (ORIGIN === null || window.location.origin === ORIGIN) {
   }
   function toFlags(options) {
     let flags = 0;
-    if (options.altKey) flags |= 1;
-    if (options.ctrlKey) flags |= 2;
-    if (options.metaKey) flags |= 4;
-    if (options.shiftKey) flags |= 8;
+    if (options.altKey) flags |= (1 << 0);
+    if (options.ctrlKey) flags |= (1 << 1);
+    if (options.metaKey) flags |= (1 << 2);
+    if (options.shiftKey) flags |= (1 << 3);
     return flags;
   }
   /*SCRIPT*/
