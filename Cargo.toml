@@ -1,7 +1,7 @@
 [package]
 name = "tauri-plugin-prevent-default"
 description = "Disable default browser shortcuts"
-version = "5.0.0"
+version = "5.0.1"
 homepage = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
 documentation = "https://docs.rs/tauri-plugin-prevent-default"
@@ -35,9 +35,8 @@ level = "deny"
 priority = -1
 
 [dependencies]
-bitflags = "2.11"
-itertools = "0.14"
-tauri = { version = "2", default-features = false }
+bitflags = "2.13"
+itertools = "0.15"
 thiserror = "2"
 
 [dependencies.serde]
@@ -48,6 +47,10 @@ features = ["derive"]
 version = "0.28"
 features = ["derive"]
 
+[dependencies.tauri]
+version = "2"
+default-features = false
+
 [target."cfg(windows)".dependencies.webview2-com]
 version = ">=0.37, <=0.38"
 optional = true
@@ -57,4 +60,4 @@ version = "0.61"
 optional = true
 
 [features]
-platform-windows = ["dep:webview2-com", "dep:windows"]
+platform-windows = ["dep:webview2-com", "dep:windows", "tauri/wry"]
