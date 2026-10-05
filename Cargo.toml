@@ -1,15 +1,15 @@
 [package]
 name = "tauri-plugin-prevent-default"
-description = "Disable default browser shortcuts"
-version = "6.0.0"
-repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
-documentation = "https://docs.rs/tauri-plugin-prevent-default"
+version = "6.0.1"
 authors = ["Andrew Ferreira <andrew.shien2@gmail.com>"]
-license = "MIT"
-edition = "2024"
-rust-version = "1.90"
-keywords = ["browser", "plugin", "tauri", "webview"]
 categories = ["gui", "web-programming"]
+documentation = "https://docs.rs/tauri-plugin-prevent-default"
+edition = "2024"
+keywords = ["browser", "plugin", "tauri", "webview"]
+license = "MIT"
+repository = "https://github.com/ferreira-tb/tauri-plugin-prevent-default"
+rust-version = "1.90"
+description = "Disable default browser shortcuts"
 
 [package.metadata.docs.rs]
 no-default-features = true

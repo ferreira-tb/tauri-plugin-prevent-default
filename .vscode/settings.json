@@ -2,6 +2,8 @@
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
   },
+  "editor.defaultFormatter": "dprint.dprint",
+  "editor.formatOnSave": true,
   "rust-analyzer.cargo.features": "all",
   "rust-analyzer.check.features": "all"
 }

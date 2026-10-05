@@ -8,7 +8,7 @@ Install the plugin by adding the following to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = "5"
+tauri-plugin-prevent-default = "6"
 ```
 
 ## Usage
@@ -122,7 +122,7 @@ The `platform-windows` feature must be enabled. Check the [documentation](https:
 
 ```toml
 [dependencies]
-tauri-plugin-prevent-default = { version = "4", features = ["platform-windows"] }
+tauri-plugin-prevent-default = { version = "6", features = ["platform-windows"] }
 ```
 
 ```rust
@@ -150,4 +150,4 @@ This plugin follows [SemVer](https://semver.org/), but [features](https://doc.ru
 
 ## Supported Tauri Version
 
-This plugin requires Tauri `2.0` or later.
+This plugin requires Tauri `2.12` or later.
